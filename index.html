@@ -6,8 +6,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
-body{background:#f5f7f5}
-.hidden{display:none!important}
+body{background:#f5f7f5}.hidden{display:none!important}
 .header{background:#fff;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:99;border-bottom:1px solid #eee}
 .logo{display:flex;align-items:center;gap:8px;font-weight:800;color:#0a7e07}
 .logo img{width:38px;height:38px;border-radius:50%}
@@ -17,8 +16,7 @@ body{background:#f5f7f5}
 .card{background:#fff;border-radius:16px;padding:18px;box-shadow:0 2px 10px rgba(0,0,0,.05);margin-bottom:14px}
 .tabs{display:flex;gap:10px;margin-bottom:14px}
 .tabs div{flex:1;text-align:center;padding:12px;border-radius:10px;font-weight:700;cursor:pointer;border:2px solid #0a7e07}
-.tabs .active{background:#0a7e07;color:#fff}
-.tabs .inactive{background:#fff;color:#0a7e07}
+.active{background:#0a7e07;color:#fff}.inactive{background:#fff;color:#0a7e07}
 input,select{width:100%;padding:14px;border:1px solid #ddd;border-radius:10px;margin:8px 0;font-size:14px;background:#eef3ff}
 .btn-green{width:100%;padding:14px;background:#0a7e07;color:#fff;border:none;border-radius:10px;font-weight:800;margin:8px 0;cursor:pointer}
 .btn-white{width:100%;padding:14px;background:#fff;color:#0a7e07;border:2px solid #0a7e07;border-radius:10px;font-weight:800;margin:8px 0;cursor:pointer}
@@ -29,10 +27,8 @@ input,select{width:100%;padding:14px;border:1px solid #ddd;border-radius:10px;ma
 .task-logo img{width:32px;height:32px;border-radius:50%}
 .task-bottom{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:#fafafa;border-top:1px solid #eee}
 .start-btn{background:#0a7e07;color:#fff;border:none;padding:10px 20px;border-radius:20px;font-weight:700;cursor:pointer}
-.earn-text{font-size:13px}
 .side-menu{position:fixed;top:0;left:-260px;width:250px;height:100%;background:#fff;z-index:1000;transition:.3s;padding:20px;box-shadow:2px 0 10px rgba(0,0,0,.1)}
-.side-menu.active{left:0}
-.menu-item{padding:12px 0;border-bottom:1px solid #f0f0f0;cursor:pointer;font-weight:600}
+.side-menu.active{left:0}.menu-item{padding:12px 0;border-bottom:1px solid #f0f0f0;cursor:pointer;font-weight:600}
 .bal-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
 .bal-box{background:#fff;padding:12px;border-radius:12px;border:1px solid #eee;text-align:center}
 .popup{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);display:none;justify-content:center;align-items:center;z-index:2000;padding:16px}
@@ -40,34 +36,28 @@ input,select{width:100%;padding:14px;border:1px solid #ddd;border-radius:10px;ma
 </style>
 </head>
 <body>
-<div class="header">
-<div class="logo"><img src="https://i.ibb.co/9mY8fL0/social-task.png" onerror="this.src='https://cdn.simpleicons.org/facebook/1877F2'"> social-task1</div>
-<div style="display:flex;gap:12px;align-items:center"><span>🔔</span><span onclick="toggleMenu()" style="font-size:22px;cursor:pointer">☰</span></div>
-</div>
+<div class="header"><div class="logo"><img src="https://cdn.simpleicons.org/facebook/1877F2"> social-task1</div><div><span onclick="toggleMenu()" style="font-size:22px;cursor:pointer">☰</span></div></div>
 <div class="green-bar"><span>📢 Official Group</span> <a href="#">Join WhatsApp</a></div>
-
 <div id="sideMenu" class="side-menu">
 <h3 style="color:#0a7e07">social-task1</h3><br>
 <div class="menu-item" onclick="showPage('home');toggleMenu()">🏠 Home</div>
 <div class="menu-item" onclick="showPage('tasks');toggleMenu()">📋 All Tasks</div>
-<div class="menu-item" onclick="showPage('post');toggleMenu()">➕ Post Task <span id="menuDep" style="float:right;color:#0a7e07">₦0</span></div>
+<div class="menu-item" onclick="showPage('post');toggleMenu()">➕ Post Task</div>
 <div class="menu-item" onclick="showPage('deposit');toggleMenu()">💳 Deposit</div>
 <div class="menu-item" onclick="showPage('withdraw');toggleMenu()">💰 Withdraw</div>
 <div class="menu-item" onclick="showPage('referral');toggleMenu()">👥 Referral</div>
-<div id="adminLink" class="menu-item hidden" onclick="showPage('admin');toggleMenu()" style="color:#e53935">🛠 Admin Panel</div>
+<div id="adminLink" class="menu-item hidden" onclick="showPage('admin');toggleMenu()" style="color:#e53935">🛠 Admin</div>
 <div class="menu-item" onclick="logout()">🚪 Logout</div>
 </div>
-
 <div class="container">
 <div id="auth">
 <div class="card" style="text-align:center">
-<img src="https://i.ibb.co/9mY8fL0/social-task.png" onerror="this.src='https://cdn.simpleicons.org/facebook/1877F2'" style="width:90px;height:90px;border-radius:50%;margin:auto;display:block;background:#0a7e07;padding:10px">
-<h2 style="margin:10px 0 2px">social-task1</h2>
-<small>Complete • Earn • Withdraw</small>
+<img src="https://cdn.simpleicons.org/facebook/1877F2" style="width:90px;height:90px;border-radius:50%;margin:auto;display:block;background:#0a7e07;padding:15px">
+<h2 style="margin:10px 0 2px">social-task1</h2><small>Complete • Earn • Withdraw</small>
 <div class="tabs" style="margin-top:16px"><div id="tabSignIn" class="active" onclick="setAuthMode('signin')">Sign In</div><div id="tabSignUp" class="inactive" onclick="setAuthMode('signup')">Sign Up</div></div>
 <input id="aUser" class="hidden" placeholder="Username">
-<input id="aEmail" type="email" placeholder="Email e.g markobinna120@gmail.com" value="markobinna120@gmail.com">
-<input id="aPass" type="password" placeholder="Password" value="••••••••">
+<input id="aEmail" type="email" placeholder="Email" value="markobinna120@gmail.com">
+<input id="aPass" type="password" placeholder="Password">
 <input id="aCode" class="hidden" placeholder="Enter 6-digit code">
 <input id="aRef" class="hidden" placeholder="Referral code (optional)">
 <div id="emailStatus" style="font-size:12px;color:#0a7e07;margin:6px 0"></div>
@@ -75,116 +65,61 @@ input,select{width:100%;padding:14px;border:1px solid #ddd;border-radius:10px;ma
 <button id="switchBtn" class="btn-white" onclick="toggleAuthMode()">Don't have account? Sign Up</button>
 </div>
 </div>
-
 <div id="home" class="hidden">
 <div class="bal-grid">
-<div class="bal-box"><small>Earning Balance</small><br><b id="avBal">₦0</b></div>
-<div class="bal-box"><small>Pending Balance</small><br><b id="pdBal">₦0</b></div>
+<div class="bal-box"><small>Earning</small><br><b id="avBal">₦0</b></div>
+<div class="bal-box"><small>Pending</small><br><b id="pdBal">₦0</b></div>
 </div>
 <div class="bal-grid">
-<div class="bal-box"><small>Posting Balance</small><br><b id="postDep">₦0</b></div>
-<div class="bal-box"><small>Total Spent</small><br><b id="totalSpent">₦0</b></div>
+<div class="bal-box"><small>Posting</small><br><b id="postDep">₦0</b></div>
+<div class="bal-box"><small>Spent</small><br><b id="totalSpent">₦0</b></div>
 </div>
 <h4 style="margin:12px 0">Available Tasks</h4>
 <div id="homeTasks"></div>
-<center><button class="btn-white" style="width:auto;padding:10px 20px" onclick="showPage('tasks')">View All Tasks</button></center>
-  </div>
-<div id="tasks" class="hidden">
-<h3>All Tasks</h3><br>
-<div id="allTasks"></div>
-<div style="display:flex;justify-content:space-between;margin:12px 0"><button class="btn-white" style="width:48%" onclick="changePage(-1)">Prev</button><button class="btn-green" style="width:48%" onclick="changePage(1)">Next</button></div>
+<center><button class="btn-white" style="width:auto;padding:10px 20px" onclick="showPage('tasks')">View All</button></center>
 </div>
-
+<div id="tasks" class="hidden"><h3>All Tasks</h3><br><div id="allTasks"></div>
+<div style="display:flex;gap:10px"><button class="btn-white" style="width:50%" onclick="changePage(-1)">Prev</button><button class="btn-green" style="width:50%" onclick="changePage(1)">Next</button></div></div>
 <div id="post" class="hidden">
-<div class="card">
-<h3>Post New Task</h3><br>
-<div>Posting Balance: <b id="postDep2">₦0</b> - <span id="selectedAppText" style="color:#0a7e07">Selected: Facebook ✓</span></div><br>
+<div class="card"><h3>Post Task</h3><br>
 <div id="appGrid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px"></div><br>
-<label>Task Type</label><select id="pType"></select>
-<label>Link</label><input id="pLink" placeholder="https://...">
-<label>Quantity</label><input id="pQty" type="number" value="5">
+<div id="selectedAppText" style="color:#0a7e07;font-weight:700">Selected: Facebook ✓</div><br>
+<select id="pType"></select><input id="pLink" placeholder="https://..."><input id="pQty" type="number" value="5">
 <div id="priceInfo" style="margin:8px 0;font-size:13px"></div>
-<small style="color:#666">For Custom comment: write comments separated by COMMA. Each earner gets 1 different comment.</small><br><br>
-<button class="btn-green" onclick="createTask()">Post Task</button>
-</div>
-<div class="card">
-<h4>My Created Tasks (<span id="activeCount">0</span>)</h4>
-<div id="emptyState" style="text-align:center;padding:20px;color:#888">No tasks yet</div>
-<div id="myCreatedList"></div>
-</div>
-</div>
-
-<div id="deposit" class="hidden">
-<div class="card">
-<h3>Deposit - Add Posting Balance</h3><br>
-<p>Balance: <b id="depBalText">₦0</b></p><br>
-<input id="dName" placeholder="Account name that sent money">
-<input id="dAmt" type="number" placeholder="Amount e.g 1000">
-<button class="btn-green" onclick="submitDeposit()">I have sent - Submit</button>
-</div>
-<div class="card"><h4>My Deposits</h4><div id="myDeposits"></div></div>
-</div>
-
-<div id="withdraw" class="hidden">
-<div class="card">
-<h3>Withdraw</h3>
+<small>Custom comment: separate with COMMA, each earner gets 1 different</small><br><br>
+<button class="btn-green" onclick="createTask()">Post Task</button></div>
+<div class="card"><h4>My Tasks (<span id="activeCount">0</span>)</h4><div id="myCreatedList"></div></div>
+  </div>
+  <div id="deposit" class="hidden"><div class="card"><h3>Deposit</h3><br><p>Balance: <b id="depBalText">₦0</b></p><br>
+<input id="dName" placeholder="Account name"><input id="dAmt" type="number" placeholder="Amount">
+<button class="btn-green" onclick="submitDeposit()">Submit</button></div><div class="card"><div id="myDeposits"></div></div></div>
+<div id="withdraw" class="hidden"><div class="card"><h3>Withdraw</h3>
 <div class="bal-grid"><div class="bal-box"><small>Available</small><br><b id="wAvBal">₦0</b></div><div class="bal-box"><small>Pending</small><br><b id="wPdBal">₦0</b></div></div>
-<small>Min ₦300, Charge ₦20. Pending needs admin approval in Admin > Pending→Available</small><br><br>
-<input id="wAccName" placeholder="Account Name"><input id="wAccNum" placeholder="Account Number"><input id="wBank" placeholder="Bank Name"><input id="wAmt" type="number" placeholder="Amount to withdraw">
-<button class="btn-green" onclick="requestWithdraw()">Request Withdraw</button>
-</div>
-</div>
-
-<div id="referral" class="hidden">
-<div class="card" style="text-align:center">
-<h3>Refer & Earn 10%</h3><br>
-<p>Your Code: <b id="myRefCode" style="color:#0a7e07;font-size:18px"></b></p><br>
-<div style="background:#f0f0f0;padding:10px;border-radius:8px;word-break:break-all;font-size:12px" id="myRefLink"></div><br>
-<button class="btn-green" onclick="copyRef()">Copy Referral Link</button><br>
-<div class="bal-grid"><div class="bal-box"><small>Referrals</small><br><b id="refCount">0</b></div><div class="bal-box"><small>Referral Earn</small><br><b id="refEarn">₦0</b></div></div>
-<div id="myReferralsList"></div>
-</div>
-</div>
-
-<div id="admin" class="hidden">
-<div class="card">
-<h3>Admin Panel</h3><br>
+<input id="wAccName" placeholder="Account Name"><input id="wAccNum" placeholder="Account Number"><input id="wBank" placeholder="Bank"><input id="wAmt" type="number" placeholder="Amount">
+<button class="btn-green" onclick="requestWithdraw()">Withdraw</button></div></div>
+<div id="referral" class="hidden"><div class="card" style="text-align:center"><h3>Refer & Earn 10%</h3><br>
+<p>Code: <b id="myRefCode" style="color:#0a7e07"></b></p><div id="myRefLink" style="background:#f0f0f0;padding:10px;border-radius:8px;word-break:break-all;font-size:12px;margin:10px 0"></div>
+<button class="btn-green" onclick="copyRef()">Copy Link</button><div id="myReferralsList" style="margin-top:12px"></div></div></div>
+<div id="admin" class="hidden"><div class="card"><h3>Admin</h3><br>
 <div style="display:flex;gap:6px;flex-wrap:wrap">
-<button class="btn-white" style="width:auto;padding:8px 10px;font-size:12px" onclick="showAdmin('users')">Users</button>
-<button class="btn-white" style="width:auto;padding:8px 10px;font-size:12px" onclick="showAdmin('proofs')">Proofs</button>
-<button class="btn-green" style="width:auto;padding:8px 10px;font-size:12px" onclick="showAdmin('pendingBal')">Pending → Available</button>
-<button class="btn-white" style="width:auto;padding:8px 10px;font-size:12px" onclick="showAdmin('depositsAdmin')">Deposits</button>
-<button class="btn-white" style="width:auto;padding:8px 10px;font-size:12px" onclick="showAdmin('withdrawalsAdmin')">Withdrawals</button>
-<button class="btn-white" style="width:auto;padding:8px 10px;font-size:12px" onclick="showAdmin('allTasksAdmin')">All Tasks</button>
+<button class="btn-white" style="width:auto;padding:8px" onclick="showAdmin('users')">Users</button>
+<button class="btn-white" style="width:auto;padding:8px" onclick="showAdmin('proofs')">Proofs</button>
+<button class="btn-green" style="width:auto;padding:8px" onclick="showAdmin('pendingBal')">Pending→Earning</button>
+<button class="btn-white" style="width:auto;padding:8px" onclick="showAdmin('depositsAdmin')">Deposits</button>
+<button class="btn-white" style="width:auto;padding:8px" onclick="showAdmin('withdrawalsAdmin')">Withdraws</button>
+<button class="btn-white" style="width:auto;padding:8px" onclick="showAdmin('allTasksAdmin')">Tasks</button>
+</div></div><div class="card"><div id="adminContent"></div></div></div>
 </div>
-</div>
-<div class="card"><div id="adminContent">Select tab above</div></div>
-</div>
-
-</div>
-
-<!-- POPUPS -->
 <div id="taskPopup" class="popup"><div class="popup-inner">
 <h3 id="popTitle">Task</h3><br>
-<a id="popLink" href="#" target="_blank" style="display:block;background:#0a7e07;color:#fff;padding:12px;text-align:center;border-radius:8px;text-decoration:none;font-weight:700">Open Task Link</a>
-<div id="popCustomList"></div>
-<br><input id="popHandle" placeholder="Your @username / handle used">
-<label>Upload Proof Screenshot</label><input id="popFile" type="file" accept="image/*">
+<a id="popLink" href="#" target="_blank" style="display:block;background:#0a7e07;color:#fff;padding:12px;text-align:center;border-radius:8px;text-decoration:none;font-weight:700">Open Link</a>
+<div id="popCustomList"></div><br>
+<input id="popHandle" placeholder="@handle"><input id="popFile" type="file" accept="image/*">
 <button class="btn-green" onclick="submitProof()">Submit Proof</button>
 <button class="btn-white" onclick="closePopup('taskPopup')">Cancel</button>
 </div></div>
-
-<div id="successPopup" class="popup"><div class="popup-inner" style="text-align:center">
-<h3>✅ Submitted!</h3><br><p>Proof submitted. Wait for admin approval. After approval, money goes to Pending Balance, then admin moves it to Earning.</p><br>
-<button class="btn-green" onclick="closePopup('successPopup')">OK</button>
-</div></div>
-
-<div id="lowBalPopup" class="popup"><div class="popup-inner" style="text-align:center">
-<h3>Insufficient Balance</h3><br><div id="lowBalText"></div><br>
-<button class="btn-green" onclick="goToDepositFromLowBal()">Go to Deposit</button>
-<button class="btn-white" onclick="closePopup('lowBalPopup')">Cancel</button>
-</div></div>
-
-<script src="app.js?v=1300"></script>
+<div id="successPopup" class="popup"><div class="popup-inner" style="text-align:center"><h3>Submitted!</h3><br><p>Wait for admin. Money go Pending first, then Earning.</p><br><button class="btn-green" onclick="closePopup('successPopup')">OK</button></div></div>
+<div id="lowBalPopup" class="popup"><div class="popup-inner" style="text-align:center"><h3>Low Balance</h3><br><div id="lowBalText"></div><br><button class="btn-green" onclick="closePopup('lowBalPopup');showPage('deposit')">Deposit</button></div></div>
+<script src="app.js?v=1400"></script>
 </body>
-  </html>  
+  </html>
