@@ -1,50 +1,139 @@
-emailjs.init("eOnK3qvUFiw89dhdV");
-const SERVICE_ID="service_147bn6m";
-const TEMPLATE_ID="template_kndbrqg";
-const ADMIN="markobinna120@gmail.com";
-const APPS=[{id:"Facebook",logo:"https://cdn.simpleicons.org/facebook/1877F2"},{id:"Instagram",logo:"https://cdn.simpleicons.org/instagram/E4405F"},{id:"TikTok",logo:"https://cdn.simpleicons.org/tiktok/000000"},{id:"YouTube",logo:"https://cdn.simpleicons.org/youtube/FF0000"},{id:"Twitter/X",logo:"https://cdn.simpleicons.org/x/000000"},{id:"WhatsApp",logo:"https://cdn.simpleicons.org/whatsapp/25D366"},{id:"Telegram",logo:"https://cdn.simpleicons.org/telegram/26A5E4"},{id:"Website",logo:"https://cdn.simpleicons.org/googlechrome/4285F4"}];
-const PRICES={"Like a post":{adv:30,earn:20},"Like a video":{adv:30,earn:20},"Watch a video":{adv:35,earn:25},"View a video":{adv:35,earn:25},"Comment on a video":{adv:40,earn:25},"Custom comment":{adv:50,earn:30},"Share a post":{adv:40,earn:25},"Join a group":{adv:50,earn:30},"Follow a channel":{adv:50,earn:30},"Start a telegram bot":{adv:50,earn:30},"Website Signup":{adv:80,earn:50},"Website Vote":{adv:60,earn:40},"Website Visit":{adv:30,earn:20}};
-let curUser=null,curTask=null,currentPage=1,perPage=10,selectedApp="Facebook"; let authMode='signin';
-function genRefCode(email){return email.split('@')[0].replace(/[^a-z0-9]/gi,'').toLowerCase()+Math.floor(100+Math.random()*900);}
-function init(){let users=JSON.parse(localStorage.getItem('mt_users')||'[]');if(!users.find(u=>u.email===ADMIN)){users.push({email:ADMIN,username:'Admin Mark',password:'Admin123',status:'active',av:0,pd:0,dep:0,totalSpent:0,refCode:'admin120',referredBy:null,refEarn:0,hasWithdrawn:false});}users.forEach(u=>{if(!u.refCode)u.refCode=genRefCode(u.email); if(u.refEarn===undefined)u.refEarn=0; if(u.hasWithdrawn===undefined)u.hasWithdrawn=false; if(u.totalSpent===undefined)u.totalSpent=0; if(u.av===undefined)u.av=0; if(u.pd===undefined)u.pd=0; if(u.dep===undefined)u.dep=0;});localStorage.setItem('mt_users',JSON.stringify(users));let grid=document.getElementById('appGrid');if(grid){grid.innerHTML='';APPS.forEach(a=>{let d=document.createElement('div');d.style.cssText='background:#fff;border:2px solid #eee;border-radius:14px;padding:12px;text-align:center;cursor:pointer';d.innerHTML=`<img src="${a.logo}" style="width:45px;height:45px;border-radius:50%"><br><small style="font-weight:bold;font-size:11px">${a.id}</small>`;d.onclick=()=>selectApp(a.id);d.id='app_'+a.id;grid.appendChild(d);});selectApp('Facebook');}let urlParams=new URLSearchParams(window.location.search);let ref=urlParams.get('ref');if(ref){let refInput=document.getElementById('aRef'); if(refInput){refInput.value=ref; setAuthMode('signup');}}setAuthMode('signin');checkLogin();}
-function setAuthMode(mode){authMode=mode;let tabIn=document.getElementById('tabSignIn'); let tabUp=document.getElementById('tabSignUp');let userInput=document.getElementById('aUser'); let authBtn=document.getElementById('authBtn');let switchBtn=document.getElementById('switchBtn'); let codeInput=document.getElementById('aCode'); let refInput=document.getElementById('aRef');if(!tabIn)return;if(mode==='signin'){tabIn.className='active'; tabUp.className='inactive';userInput.classList.add('hidden'); codeInput.classList.add('hidden'); refInput.classList.add('hidden');authBtn.textContent='Sign In'; switchBtn.textContent="Don't have account? Sign Up";}else{tabIn.className='inactive'; tabUp.className='active';userInput.classList.remove('hidden'); refInput.classList.remove('hidden');authBtn.textContent='Sign Up - Send Code'; switchBtn.textContent="Already have account? Sign In";}let es=document.getElementById('emailStatus'); if(es) es.textContent='';}
-function toggleAuthMode(){setAuthMode(authMode==='signin'?'signup':'signin');}
-function selectApp(id){selectedApp=id;document.querySelectorAll('#appGrid div').forEach(x=>x.style.borderColor='#eee');let el=document.getElementById('app_'+id);if(el)el.style.borderColor='#0a7e07';let txt=document.getElementById('selectedAppText'); if(txt) txt.textContent='Selected: '+id+' ✓';loadTypes();}
-function loadTypes(){let sel=document.getElementById('pType');if(!sel)return;sel.innerHTML='';let opts=[];if(selectedApp==='YouTube'){opts=["Like a post","Watch a video","Comment on a video","Custom comment","Share a post"];}else if(selectedApp==='Facebook'){opts=["Like a video","View a video","Comment on a video","Custom comment","Share a post","Join a group"];}else if(selectedApp==='Instagram'){opts=["Like a video","View a video","Comment on a video","Custom comment","Share a post"];}else if(selectedApp==='TikTok'||selectedApp==='Twitter/X'){opts=["Like a video","View a video","Comment on a video","Custom comment","Share a post"];}else if(selectedApp==='WhatsApp'){opts=["Join a group","Follow a channel"];}else if(selectedApp==='Telegram'){opts=["Join a group","Follow a channel","Start a telegram bot"];}else if(selectedApp==='Website'){opts=["Website Signup","Website Vote","Website Visit"];}opts.forEach(o=>{let e=document.createElement('option');e.value=o;let p=PRICES[o]?PRICES[o].adv:30;e.textContent=o+' - ₦'+p;sel.appendChild(e);});sel.onchange=updatePrice;let q=document.getElementById('pQty'); if(q) q.oninput=updatePrice;updatePrice();}
-function updatePrice(){let t=document.getElementById('pType'); if(!t) return; let type=t.value; let q=parseInt(document.getElementById('pQty').value)||0;if(!PRICES[type])return;let pi=document.getElementById('priceInfo'); if(pi) pi.innerHTML=`You will pay: <b>₦${PRICES[type].adv*q}</b> for ${q} units`;}
-function checkLogin(){let email=localStorage.getItem('mt_cur');if(!email){showAuth();return;}let users=JSON.parse(localStorage.getItem('mt_users')||'[]');curUser=users.find(u=>u.email===email);if(!curUser){showAuth();return;}if(curUser.status && curUser.status!=='active'){alert('Account suspended');localStorage.removeItem('mt_cur');showAuth();return;}document.getElementById('auth').classList.add('hidden');document.getElementById('home').classList.remove('hidden');if(curUser.av===undefined)curUser.av=0; if(curUser.pd===undefined)curUser.pd=0; if(curUser.dep===undefined)curUser.dep=0; if(!curUser.refCode)curUser.refCode=genRefCode(curUser.email); if(curUser.totalSpent===undefined)curUser.totalSpent=0;document.getElementById('avBal').textContent='₦'+(curUser.av||0);document.getElementById('pdBal').textContent='₦'+(curUser.pd||0);let pd=document.getElementById('postDep'); if(pd) pd.textContent='₦'+(curUser.dep||0);let md=document.getElementById('menuDep'); if(md) md.textContent='₦'+(curUser.dep||0);let ts=document.getElementById('totalSpent'); if(ts) ts.textContent='₦'+(curUser.totalSpent||0);let adminLink=document.getElementById('adminLink');if(curUser.email===ADMIN){adminLink.classList.remove('hidden');adminLink.style.display='block';}else{adminLink.classList.add('hidden');adminLink.style.display='none';}loadHomeTasks();loadAllTasks();loadMyDeposits();loadReferral();loadWithdrawPage();loadMyCreatedTasks();}
-function showAuth(){document.getElementById('auth').classList.remove('hidden');let h=document.getElementById('home'); if(h) h.classList.add('hidden');}
-function toggleMenu(){document.getElementById('sideMenu').classList.toggle('active')}
-function showPage(p){['home','tasks','post','deposit','admin','referral','withdraw'].forEach(id=>{let el=document.getElementById(id);if(el)el.classList.add('hidden')});let t=document.getElementById(p);if(t)t.classList.remove('hidden');if(p==='tasks')loadAllTasks();if(p==='deposit')loadMyDeposits();if(p==='post'){let pd=document.getElementById('postDep'); if(pd) pd.textContent='₦'+(curUser.dep||0);loadMyCreatedTasks();}if(p==='referral')loadReferral();if(p==='withdraw')loadWithdrawPage();}
-let codeSent='',tempData={};
-async function handleAuth(){let userEl=document.getElementById('aUser'); let user=userEl?userEl.value.trim():''; let email=document.getElementById('aEmail').value.trim();let pass=document.getElementById('aPass').value.trim();let codeInput=document.getElementById('aCode');let refCodeEl=document.getElementById('aRef'); let refCodeInput=refCodeEl?refCodeEl.value.trim().toLowerCase():''; let users=JSON.parse(localStorage.getItem('mt_users')||'[]');let exists=users.find(u=>u.email===email);if(authMode==='signin'){if(!email||!pass){alert('Fill email and password');return;}if(!exists){alert('Account not found');setAuthMode('signup');return;}if(exists.password!==pass){alert('Wrong password');return;}if(exists.status!=='active'){alert('Suspended');return;}localStorage.setItem('mt_cur',email);location.reload();return;}if(authMode==='signup'){if(codeInput.classList.contains('hidden')){if(!user||!email||!pass){alert('Fill all');return;}if(exists){alert('Email exists');setAuthMode('signin');return;}let referredByUser=null;if(refCodeInput){referredByUser=users.find(u=>u.refCode.toLowerCase()===refCodeInput);if(!referredByUser){alert('Invalid referral code');return;}if(referredByUser.email===email){alert('Cannot refer yourself');return;}}tempData={user,email,pass,referredBy:referredByUser?referredByUser.email:null};codeSent=Math.floor(100000+Math.random()*900000).toString();document.getElementById('emailStatus').textContent='Sending to '+email+'...';try{await emailjs.send(SERVICE_ID,TEMPLATE_ID,{to_email:email,code:codeSent,username:user});document.getElementById('emailStatus').textContent='Code sent';codeInput.classList.remove('hidden');document.getElementById('authBtn').textContent='Verify Code';}catch(e){document.getElementById('emailStatus').textContent='Code: '+codeSent;codeInput.classList.remove('hidden');document.getElementById('authBtn').textContent='Verify Code';}}else{if(document.getElementById('aCode').value.trim()!==codeSent){alert('Wrong code');return;}let newRef=genRefCode(tempData.email);users.push({email:tempData.email,username:tempData.user,password:tempData.pass,status:'active',av:0,pd:0,dep:0,totalSpent:0,refCode:newRef,referredBy:tempData.referredBy,refEarn:0,hasWithdrawn:false});localStorage.setItem('mt_users',JSON.stringify(users));localStorage.setItem('mt_cur',tempData.email);alert('Account created!');location.reload();}}}
-function logout(){localStorage.removeItem('mt_cur');location.reload();}
-function taskHtml(t){let app=APPS.find(a=>a.id===t.app);let img=app?`<img src="${app.logo}">`:'';let earn=t.priceEarn||20;return `<div class="task-fansup"><div class="task-top"><div class="task-logo">${img}</div><div style="flex:1"><div style="font-size:12px;color:#888">${t.app} • Task</div><div style="font-weight:800;font-size:14px">${t.type}</div><div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><span class="badge-gray">👥 ${t.remaining} slots left</span><span class="badge-gray">☑ Verification in 24-48h</span></div></div></div><div class="task-bottom"><div class="earn-text"><small style="color:#888;font-size:11px">Earn</small><br><b>₦${earn}</b></div><button class="start-btn" onclick="openTask('${t.id}')">Start Task</button></div></div>`;}
-function getMyDoneIds(){let p=JSON.parse(localStorage.getItem('mt_proofs')||'[]');return p.filter(x=>x.user===curUser.email).map(x=>x.taskId);}
-function loadHomeTasks(){let done=getMyDoneIds();let tasks=JSON.parse(localStorage.getItem('mt_tasks')||'[]').filter(t=>t.remaining>0&&t.owner!==curUser.email&&!done.includes(t.id)).slice(0,6);let el=document.getElementById('homeTasks'); if(!el) return; el.innerHTML=tasks.length?tasks.map(taskHtml).join(''):'<div style="text-align:center;color:#888;padding:20px">There are no available tasks</div>';}
-function loadAllTasks(){let done=getMyDoneIds();let tasks=JSON.parse(localStorage.getItem('mt_tasks')||'[]').filter(t=>t.remaining>0&&t.owner!==curUser.email&&!done.includes(t.id));let start=(currentPage-1)*perPage;let pag=tasks.slice(start,start+perPage);let el=document.getElementById('allTasks'); if(!el) return; el.innerHTML=pag.length?pag.map(taskHtml).join(''):'<div style="text-align:center;color:#888;padding:20px">No tasks<br><small>Post with admin, login with other account</small></div>';}
-function changePage(d){currentPage+=d;if(currentPage<1)currentPage=1;loadAllTasks();}
-function loadMyCreatedTasks(){if(!curUser)return;let tasks=JSON.parse(localStorage.getItem('mt_tasks')||'[]').filter(t=>t.owner===curUser.email);let ac=document.getElementById('activeCount'); if(ac) ac.textContent=tasks.length;let list=document.getElementById('myCreatedList');let empty=document.getElementById('emptyState');if(!list)return;if(tasks.length){if(empty)empty.style.display='none';list.innerHTML=tasks.map(t=>`<div style="background:#fff;border:1px solid #eee;padding:12px;border-radius:12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center"><div><b>${t.name}</b><br><small>${t.remaining}/${t.qty} left</small></div><button onclick="deleteTask('${t.id}');loadMyCreatedTasks()" style="background:#ffe9e9;color:#e53935;border:none;padding:6px 10px;border-radius:8px">Delete</button></div>`).join('');}else{if(empty)empty.style.display='block';list.innerHTML='';}}
-function createTask(){let type=document.getElementById('pType').value;let link=document.getElementById('pLink').value.trim();let qty=parseInt(document.getElementById('pQty').value);if(!link||!qty){alert('Fill all');return;}let price=PRICES[type];let total=price.adv*qty;let myBal=curUser.dep||0;if(myBal<total){document.getElementById('lowBalText').innerHTML=`<b>Insufficient Balance</b><br><br>Current: <b style="color:#e53935">₦${myBal}</b><br>Required: ₦${total}<br>Short: ₦${total-myBal}<br><br>Fund wallet`;document.getElementById('lowBalPopup').style.display='flex';return;}let tasks=JSON.parse(localStorage.getItem('mt_tasks')||'[]');let custom=[];if(type==='Custom comment'){let c=prompt('Enter comments comma separated');if(c)custom=c.split(',').map(s=>s.trim()).filter(Boolean);}let task={id:'t_'+Date.now(),name:type+' on '+selectedApp,app:selectedApp,type,link,qty,remaining:qty,priceAdv:price.adv,priceEarn:price.earn,owner:curUser.email,customComments:custom,created:Date.now()};tasks.push(task);localStorage.setItem('mt_tasks',JSON.stringify(tasks));curUser.dep-=total;curUser.totalSpent=(curUser.totalSpent||0)+total;let users=JSON.parse(localStorage.getItem('mt_users')||'[]');let idx=users.findIndex(u=>u.email===curUser.email);users[idx]=curUser;localStorage.setItem('mt_users',JSON.stringify(users));alert('Task posted!');document.getElementById('pLink').value='';loadMyCreatedTasks();checkLogin();showPage('post');}
-function goToDepositFromLowBal(){closePopup('lowBalPopup');showPage('deposit');}
-function openTask(id){let tasks=JSON.parse(localStorage.getItem('mt_tasks')||'[]');curTask=tasks.find(t=>t.id===id);if(!curTask){alert('Not found');return;}document.getElementById('popTitle').textContent=curTask.name;document.getElementById('popLink').href=curTask.link;let cl=document.getElementById('popCustomList'); if(cl) cl.innerHTML=curTask.customComments&&curTask.customComments.length?'<b>Use one:</b><br>'+curTask.customComments.join('<br>'):'';document.getElementById('taskPopup').style.display='flex';}
-function closePopup(id){document.getElementById(id).style.display='none';}
-function submitProof(){let handle=document.getElementById('popHandle').value.trim();let file=document.getElementById('popFile').files[0];if(!handle||!file){alert('Fill handle and proof');return;}let proofs=JSON.parse(localStorage.getItem('mt_proofs')||'[]');if(proofs.find(p=>p.taskId===curTask.id&&p.user===curUser.email)){alert('Already done');return;}let reader=new FileReader();reader.onload=function(e){let proofs=JSON.parse(localStorage.getItem('mt_proofs')||'[]');proofs.push({id:'p_'+Date.now(),taskId:curTask.id,taskName:curTask.name,owner:curTask.owner,user:curUser.email,handle,proof:e.target.result,status:'pending',type:curTask.type,app:curTask.app,created:Date.now()});localStorage.setItem('mt_proofs',JSON.stringify(proofs));closePopup('taskPopup');document.getElementById('successPopup').style.display='flex';loadHomeTasks();loadAllTasks();};reader.readAsDataURL(file);}
-function loadReferral(){if(!curUser) return;let baseUrl=window.location.origin+window.location.pathname;let link=baseUrl+'?ref='+curUser.refCode;let rc=document.getElementById('myRefCode'); if(rc) rc.textContent=curUser.refCode; let rl=document.getElementById('myRefLink'); if(rl) rl.textContent=link;let users=JSON.parse(localStorage.getItem('mt_users')||'[]');let myRefs=users.filter(u=>u.referredBy===curUser.email);let rC=document.getElementById('refCount'); if(rC) rC.textContent=myRefs.length; let rE=document.getElementById('refEarn'); if(rE) rE.textContent='₦'+(curUser.refEarn||0);let mR=document.getElementById('myReferralsList'); if(mR) mR.innerHTML=myRefs.length?myRefs.map(u=>`<div style="border:1px solid #eee;padding:10px;margin:5px 0;border-radius:8px"><b>${u.username}</b><br><small>${u.hasWithdrawn?'✅ Has withdrawn':'⏳ No withdrawal yet'}</small></div>`).join(''):'No referrals yet';}
-function copyRef(){let link=document.getElementById('myRefLink').textContent; navigator.clipboard.writeText(link).then(()=>alert('Copied!')); }
-function loadWithdrawPage(){if(!curUser) return;let w1=document.getElementById('wAvBal'); if(w1) w1.textContent='₦'+(curUser.av||0); let w2=document.getElementById('wPdBal'); if(w2) w2.textContent='₦'+(curUser.pd||0);let withdrawals=JSON.parse(localStorage.getItem('mt_withdrawals')||'[]').filter(w=>w.user===curUser.email);let mw=document.getElementById('myWithdrawals'); if(mw) mw.innerHTML=withdrawals.length?withdrawals.map(w=>`<div style="border:1px solid #eee;padding:10px;margin:5px 0;border-radius:8px">₦${w.amount} → Net ₦${w.net}<br><small>${w.bank} • ${w.accNum}</small><br><b>${w.status}</b></div>`).join(''):'No withdrawals';}
-function requestWithdraw(){let accName=document.getElementById('wAccName').value.trim();let accNum=document.getElementById('wAccNum').value.trim();let bank=document.getElementById('wBank').value.trim();let amt=parseInt(document.getElementById('wAmt').value);if(!accName||!accNum||!bank||!amt){alert('Fill all');return;}if(amt<300){alert('Min ₦300');return;}if((curUser.av||0)<amt){alert('Insufficient. Pending ₦'+(curUser.pd||0));return;}let withdrawals=JSON.parse(localStorage.getItem('mt_withdrawals')||'[]');withdrawals.push({id:'w_'+Date.now(),user:curUser.email,accName,accNum,bank,amount:amt,charge:20,net:amt-20,status:'pending',created:Date.now()});localStorage.setItem('mt_withdrawals',JSON.stringify(withdrawals));curUser.av-=amt;let users=JSON.parse(localStorage.getItem('mt_users')||'[]');let idx=users.findIndex(u=>u.email===curUser.email);users[idx]=curUser;localStorage.setItem('mt_users',JSON.stringify(users));alert('Requested! Net ₦'+(amt-20));loadWithdrawPage();checkLogin();}
-function submitDeposit(){let name=document.getElementById('dName').value.trim();let amt=parseInt(document.getElementById('dAmt').value);if(!name||!amt){alert('Fill');return;}let deps=JSON.parse(localStorage.getItem('mt_deposits')||'[]');deps.push({id:'d_'+Date.now(),user:curUser.email,accountName:name,amount:amt,status:'pending',created:Date.now()});localStorage.setItem('mt_deposits',JSON.stringify(deps));alert('Deposit sent');loadMyDeposits();}
-function loadMyDeposits(){let deps=JSON.parse(localStorage.getItem('mt_deposits')||'[]').filter(d=>d.user===curUser.email);let md=document.getElementById('myDeposits'); if(md) md.innerHTML=deps.length?deps.map(d=>`<div style="border:1px solid #eee;padding:8px;margin:5px 0;border-radius:8px">${d.accountName} - ₦${d.amount} - <b>${d.status}</b></div>`).join(''):'No deposits'; let db=document.getElementById('depBalText'); if(db) db.textContent='₦'+(curUser.dep||0);}
-function showAdmin(tab){if(curUser.email!==ADMIN){alert('Only admin');return;}let c=document.getElementById('adminContent');if(tab==='users'){let users=JSON.parse(localStorage.getItem('mt_users')||'[]');c.innerHTML='<h4>Users</h4>'+users.map(u=>`<div style="padding:12px;border:1px solid #eee;margin:8px 0;border-radius:8px"><b>${u.username}</b> - ${u.email}<br>Av ₦${u.av||0} | Pd ₦${u.pd||0} | Dep ₦${u.dep||0}<br>${u.email!==ADMIN? `<button class="btn-reject" onclick="tempDeleteUser('${u.email}')">Suspend</button><button class="btn-reject" style="background:#000" onclick="permanentDeleteUser('${u.email}')">Delete</button>`:''}</div>`).join('');}if(tab==='pendingBal'){let users=JSON.parse(localStorage.getItem('mt_users')||'[]').filter(u=> (u.pd||0)>0 );c.innerHTML='<h4>Pending → Available</h4>'+(users.length?users.map(u=>`<div style="border:1px solid #eee;padding:10px;margin:8px 0;border-radius:8px"><b>${u.username}</b><br>Pending: ₦${u.pd}<br><button class="btn-approve" onclick="approvePendingBal('${u.email}')">Approve</button></div>`).join(''):'No pending');}if(tab==='allTasksAdmin'){let tasks=JSON.parse(localStorage.getItem('mt_tasks')||'[]');c.innerHTML='<h4>All Tasks</h4>'+tasks.map(t=>`<div style="padding:8px;border-bottom:1px solid #eee">${t.name} - ${t.remaining}/${t.qty} <button onclick="deleteTask('${t.id}')">Delete</button></div>`).join('');}if(tab==='proofs'){let proofs=JSON.parse(localStorage.getItem('mt_proofs')||'[]').filter(p=>p.status==='pending');c.innerHTML='<h4>Pending Proofs</h4>'+(proofs.length?proofs.map(p=>`<div style="border:1px solid #eee;padding:10px;margin:8px 0;border-radius:8px"><b>${p.taskName}</b><br>${p.user}<br><img src="${p.proof}" style="width:100%;max-width:220px"><br><button class="btn-approve" onclick="approveProof('${p.id}')">Approve → Pending</button><button class="btn-reject" onclick="rejectProof('${p.id}')">Reject</button></div>`).join(''):'No pending');}if(tab==='depositsAdmin'){let deps=JSON.parse(localStorage.getItem('mt_deposits')||'[]').filter(d=>d.status==='pending');c.innerHTML='<h4>Deposits</h4>'+(deps.length?deps.map(d=>`<div style="border:1px solid #eee;padding:10px;margin:8px 0;border-radius:8px">${d.user} - ₦${d.amount}<br><button class="btn-approve" onclick="approveDeposit('${d.id}')">Approve</button><button class="btn-reject" onclick="rejectDeposit('${d.id}')">Reject</button></div>`).join(''):'No pending');}if(tab==='withdrawalsAdmin'){let wds=JSON.parse(localStorage.getItem('mt_withdrawals')||'[]').filter(w=>w.status==='pending');c.innerHTML='<h4>Withdrawals</h4>'+(wds.length?wds.map(w=>`<div style="border:1px solid #eee;padding:10px;margin:8px 0;border-radius:8px"><b>${w.user}</b><br>₦${w.amount} - Net ₦${w.net}<br>${w.bank} - ${w.accNum} - ${w.accName}<br><button class="btn-approve" onclick="approveWithdrawal('${w.id}')">Pay ₦${w.net}</button><button class="btn-reject" onclick="rejectWithdrawal('${w.id}')">Reject</button></div>`).join(''):'No pending');}if(tab==='referralsAdmin'){let users=JSON.parse(localStorage.getItem('mt_users')||'[]');let withRefs=users.filter(u=>u.referredBy);c.innerHTML='<h4>Referrals</h4>'+(withRefs.length?withRefs.map(u=>`<div style="border:1px solid #eee;padding:8px;margin:5px 0;border-radius:8px">${u.email} by ${u.referredBy}</div>`).join(''):'No referrals');}}
-function approvePendingBal(email){let users=JSON.parse(localStorage.getItem('mt_users')||'[]');let u=users.find(x=>x.email===email);if(!u)return;u.av=(u.av||0)+(u.pd||0);u.pd=0;localStorage.setItem('mt_users',JSON.stringify(users));alert('Approved');showAdmin('pendingBal');}
-function tempDeleteUser(email){if(email===ADMIN)return;let users=JSON.parse(localStorage.getItem('mt_users')||'[]');let u=users.find(x=>x.email===email);if(u){u.status='suspended';localStorage.setItem('mt_users',JSON.stringify(users));showAdmin('users');}}
-function permanentDeleteUser(email){if(email===ADMIN)return;let users=JSON.parse(localStorage.getItem('mt_users')||'[]');users=users.filter(x=>x.email!==email);localStorage.setItem('mt_users',JSON.stringify(users));showAdmin('users');}
-function approveProof(id){let proofs=JSON.parse(localStorage.getItem('mt_proofs')||'[]');let p=proofs.find(x=>x.id===id);if(!p)return;let tasks=JSON.parse(localStorage.getItem('mt_tasks')||'[]');let t=tasks.find(x=>x.id===p.taskId);if(t){t.remaining=Math.max(0,t.remaining-1);localStorage.setItem('mt_tasks',JSON.stringify(tasks));}let users=JSON.parse(localStorage.getItem('mt_users')||'[]');let u=users.find(x=>x.email===p.user);if(u){u.pd=(u.pd||0)+(t?t.priceEarn:20);localStorage.setItem('mt_users',JSON.stringify(users));}p.status='approved';localStorage.setItem('mt_proofs',JSON.stringify(proofs));showAdmin('proofs');}
-function rejectProof(id){let proofs=JSON.parse(localStorage.getItem('mt_proofs')||'[]');let p=proofs.find(x=>x.id===id);if(!p)return;p.status='rejected';localStorage.setItem('mt_proofs',JSON.stringify(proofs));showAdmin('proofs');}
-function approveDeposit(id){let deps=JSON.parse(localStorage.getItem('mt_deposits')||'[]');let d=deps.find(x=>x.id===id);if(!d)return;let users=JSON.parse(localStorage.getItem('mt_users')||'[]');let u=users.find(x=>x.email===d.user);if(u){u.dep=(u.dep||0)+d.amount;localStorage.setItem('mt_users',JSON.stringify(users));}d.status='approved';localStorage.setItem('mt_deposits',JSON.stringify(deps));showAdmin('depositsAdmin');}
-function rejectDeposit(id){let deps=JSON.parse(localStorage.getItem('mt_deposits')||'[]');let d=deps.find(x=>x.id===id);if(!d)return;d.status='rejected';localStorage.setItem('mt_deposits',JSON.stringify(deps));showAdmin('depositsAdmin');}
-function approveWithdrawal(id){let wds=JSON.parse(localStorage.getItem('mt_withdrawals')||'[]');let w=wds.find(x=>x.id===id);if(!w)return;let users=JSON.parse(localStorage.getItem('mt_users')||'[]');let u=users.find(x=>x.email===w.user);if(u){if(!u.hasWithdrawn && u.referredBy){let ref=users.find(x=>x.email===u.referredBy);if(ref){let bonus=Math.floor(w.amount*0.10);ref.av=(ref.av||0)+bonus;ref.refEarn=(ref.refEarn||0)+bonus;}}u.hasWithdrawn=true;localStorage.setItem('mt_users',JSON.stringify(users));}w.status='approved';localStorage.setItem('mt_withdrawals',JSON.stringify(wds));alert('Approved Net ₦'+w.net);showAdmin('withdrawalsAdmin');}
-function rejectWithdrawal(id){let wds=JSON.parse(localStorage.getItem('mt_withdrawals')||'[]');let w=wds.find(x=>x.id===id);if(!w)return;let users=JSON.parse(localStorage.getItem('mt_users')||'[]');let u=users.find(x=>x.email===w.user);if(u){u.av=(u.av||0)+w.amount;localStorage.setItem('mt_users',JSON.stringify(users));}w.status='rejected';localStorage.setItem('mt_withdrawals',JSON.stringify(wds));showAdmin('withdrawalsAdmin');}
-function deleteTask(id){let tasks=JSON.parse(localStorage.getItem('mt_tasks')||'[]');tasks=tasks.filter(t=>t.id!==id);localStorage.setItem('mt_tasks',JSON.stringify(tasks));if(typeof loadMyCreatedTasks==='function') loadMyCreatedTasks();showAdmin('allTasksAdmin');}
-window.onload=init;
+let curUser=null;
+let currentPage=1;
+let perPage=20;
+const ADMIN_EMAIL='markobinna120@gmail.com';
+function getMyDoneIds(){
+let proofs=JSON.parse(localStorage.getItem('mt_proofs')||'[]');
+return proofs.filter(p=>p.user===curUser?.email&&p.status!=='rejected').map(p=>p.taskId);
+}
+function copyComment(txt){navigator.clipboard.writeText(txt); alert('Comment copied! Paste it under the post');}
+function taskHtml(t){
+let copyBtn='';
+if(t.customComment && t.customComment.trim()!==''){
+copyBtn=`<div style="background:#fff3cd;padding:8px;border:1px dashed #0a7e07;margin:8px 0;border-radius:5px"><b>Comment to copy:</b><br><span id="c_${t.id}">${t.customComment}</span><br><button onclick="copyComment(document.getElementById('c_${t.id}').innerText)" style="margin-top:5px;background:#ff9800;color:white;border:none;padding:5px 10px;border-radius:3px;cursor:pointer">📋 Copy Comment</button></div>`;
+}
+let actionType=t.actionType||'Follow';
+return `<div class="task-card"><h4>${t.title}</h4><p><b>${t.platform} - ${actionType}</b> | Earn: ₦${t.priceEarn} | Left: ${t.remaining}/${t.total}</p>${copyBtn}<a href="${t.link}" target="_blank" style="color:#0a7e07">Open Link</a><br><br><button onclick="openProofModal('${t.id}')" style="background:#0a7e07;color:white;padding:8px 15px;border:none;border-radius:5px;cursor:pointer">Do Task</button></div>`;
+}
+function loadHomeTasks(){
+let done=getMyDoneIds();
+let tasks=JSON.parse(localStorage.getItem('mt_tasks')||'[]').filter(t=>t.remaining>0&&t.owner!==curUser.email&&!done.includes(t.id)).slice(0,6);
+let el=document.getElementById('homeTasks'); if(!el) return;
+el.innerHTML=tasks.length?tasks.map(taskHtml).join(''):'<div style="text-align:center;color:#888;padding:20px">There are no available tasks</div>';
+}
+function loadAllTasks(){
+let done=getMyDoneIds();
+let tasks=JSON.parse(localStorage.getItem('mt_tasks')||'[]').filter(t=>t.remaining>0&&t.owner!==curUser.email&&!done.includes(t.id));
+let start=(currentPage-1)*perPage;
+let pag=tasks.slice(start,start+perPage);
+let el=document.getElementById('allTasks'); if(!el) return;
+el.innerHTML=pag.length?pag.map(taskHtml).join(''):'<div style="text-align:center;color:#888;padding:20px">No available tasks</div>';
+let pages=Math.ceil(tasks.length/perPage)||1;
+let pg=document.getElementById('pagination'); if(pg){pg.innerHTML=''; for(let i=1;i<=pages;i++){pg.innerHTML+=`<button onclick="goPage(${i})" style="margin:2px;padding:5px 10px;background:${i===currentPage?'#0a7e07':'#ccc'};color:white;border:none;border-radius:3px">${i}</button>`}}
+}
+function goPage(p){currentPage=p; loadAllTasks();}
+function updateActionOptions(){
+let platform=document.getElementById('taskPlatform').value;
+let actionSelect=document.getElementById('taskAction');
+if(!actionSelect) return;
+if(platform==='YouTube'){
+actionSelect.innerHTML='<option value="Subscribe">Subscribe</option><option value="Like">Like</option><option value="Comment">Comment</option><option value="Custom Comment">Custom Comment</option>';
+}else{
+actionSelect.innerHTML='<option value="Follow">Follow</option><option value="Like">Like</option><option value="Comment">Comment</option><option value="Custom Comment">Custom Comment</option>';
+}
+  }
+function createTask(){
+let title=document.getElementById('taskTitle').value;
+let link=document.getElementById('taskLink').value;
+let platform=document.getElementById('taskPlatform').value;
+let action=document.getElementById('taskAction').value;
+let quantity=document.getElementById('taskQuantity').value;
+let customComment=document.getElementById('customCommentInput')?document.getElementById('customCommentInput').value:'';
+if(!title||!link||!quantity) return alert('Fill all fields');
+if(action==='Custom Comment' && !customComment) return alert('Enter the comment you want earners to copy');
+let pricePer=10;
+let totalCost=quantity*pricePer;
+let users=JSON.parse(localStorage.getItem('mt_users')||'[]');
+let me=users.find(u=>u.email===curUser.email);
+if(me && (me.dep||0)<totalCost) return alert('Insufficient deposit balance. Fund your wallet first!');
+if(me) me.dep-=totalCost;
+let tasks=JSON.parse(localStorage.getItem('mt_tasks')||'[]');
+tasks.push({id:'t_'+Date.now(),title:title,link:link,platform:platform,actionType:action,customComment:customComment,priceEarn:5,price:pricePer,total:parseInt(quantity),remaining:parseInt(quantity),owner:curUser.email});
+localStorage.setItem('mt_users',JSON.stringify(users));
+localStorage.setItem('mt_tasks',JSON.stringify(tasks));
+alert('Task posted successfully!');
+loadHomeTasks(); loadAllTasks();
+}
+function submitProof(){
+let taskId=document.getElementById('proofTaskId').value;
+let proofText=document.getElementById('proofInput').value;
+if(!proofText) return alert('Enter proof');
+let proofs=JSON.parse(localStorage.getItem('mt_proofs')||'[]');
+proofs.push({id:'p_'+Date.now(),taskId:taskId,user:curUser.email,proof:proofText,status:'pending',time:new Date().toLocaleString()});
+localStorage.setItem('mt_proofs',JSON.stringify(proofs));
+alert('Submitted! Money will go to Pending Balance after admin approves');
+closeProofModal();
+}
+function approveProof(id){
+let proofs=JSON.parse(localStorage.getItem('mt_proofs')||'[]');
+let users=JSON.parse(localStorage.getItem('mt_users')||'[]');
+let tasks=JSON.parse(localStorage.getItem('mt_tasks')||'[]');
+let p=proofs.find(x=>x.id===id); if(!p) return;
+let t=tasks.find(x=>x.id===p.taskId);
+p.status='approved';
+let u=users.find(x=>x.email===p.user);
+if(u){u.pd=(u.pd||0)+(t?t.priceEarn:20);}
+if(t&&t.remaining>0) t.remaining--;
+localStorage.setItem('mt_proofs',JSON.stringify(proofs));
+localStorage.setItem('mt_users',JSON.stringify(users));
+localStorage.setItem('mt_tasks',JSON.stringify(tasks));
+loadProofs(); loadPendingBal(); alert('Approved! Money sent to Pending Balance');
+}
+function approvePendingBal(email){
+let users=JSON.parse(localStorage.getItem('mt_users')||'[]');
+let u=users.find(x=>x.email===email);
+if(!u) return;
+if(!u.pd||u.pd<=0) return alert('No pending');
+u.av=(u.av||0)+(u.pd||0);
+u.pd=0;
+localStorage.setItem('mt_users',JSON.stringify(users));
+loadPendingBal(); loadUsers();
+alert('Approved! Money moved to Earning Balance');
+}
+function rejectProof(id){
+let proofs=JSON.parse(localStorage.getItem('mt_proofs')||'[]');
+let p=proofs.find(x=>x.id===id); if(p) p.status='rejected';
+localStorage.setItem('mt_proofs',JSON.stringify(proofs));
+loadProofs();
+}
+function loadProofs(){
+let proofs=JSON.parse(localStorage.getItem('mt_proofs')||'[]').filter(p=>p.status==='pending');
+let el=document.getElementById('adminProofs'); if(!el) return;
+el.innerHTML=proofs.length?proofs.map(p=>`<div style="border:1px solid #ccc;padding:10px;margin:5px"><b>${p.user}</b> - Task: ${p.taskId}<br>Proof: ${p.proof}<br><button onclick="approveProof('${p.id}')" style="background:#0a7e07;color:white;padding:5px 10px;border:none">Approve to Pending</button> <button onclick="rejectProof('${p.id}')" style="background:red;color:white;padding:5px 10px;border:none">Reject</button></div>`).join(''):'No pending proofs';
+}
+function loadPendingBal(){
+let users=JSON.parse(localStorage.getItem('mt_users')||'[]').filter(u=>u.pd>0);
+let el=document.getElementById('pendingBalList'); if(!el) return;
+el.innerHTML=users.length?users.map(u=>`<div style="border:1px solid #ccc;padding:10px;margin:5px"><b>${u.email}</b> - Pending: ₦${u.pd}<br><button onclick="approvePendingBal('${u.email}')" style="background:#0a7e07;color:white;padding:5px 10px;border:none">Approve to Earning Balance</button></div>`).join(''):'No pending balances';
+}
+function openProofModal(id){document.getElementById('proofTaskId').value=id; document.getElementById('proofModal').style.display='block';}
+function closeProofModal(){document.getElementById('proofModal').style.display='none';}
+function loadUsers(){
+let users=JSON.parse(localStorage.getItem('mt_users')||'[]');
+let el=document.getElementById('userList'); if(!el) return;
+el.innerHTML=users.map(u=>`${u.email} - Earn:₦${u.av||0} Pend:₦${u.pd||0} Dep:₦${u.dep||0}<br>`).join('');
+}
+function loadDeposits(){
+let deps=JSON.parse(localStorage.getItem('mt_deposits')||'[]').filter(d=>d.status==='pending');
+let el=document.getElementById('depositList'); if(!el) return;
+el.innerHTML=deps.length?deps.map(d=>`<div>${d.user} - ₦${d.amount} <button onclick="approveDeposit('${d.id}')">Approve</button></div>`).join(''):'No pending deposits';
+}
+function approveDeposit(id){
+let deps=JSON.parse(localStorage.getItem('mt_deposits')||'[]');
+let users=JSON.parse(localStorage.getItem('mt_users')||'[]');
+let d=deps.find(x=>x.id===id); if(!d) return; d.status='approved';
+let u=users.find(x=>x.email===d.user); if(u) u.dep=(u.dep||0)+d.amount;
+localStorage.setItem('mt_deposits',JSON.stringify(deps));
+localStorage.setItem('mt_users',JSON.stringify(users));
+loadDeposits();
+  }
