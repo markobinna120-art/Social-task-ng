@@ -32,7 +32,7 @@ let pg=document.getElementById('pagination'); if(pg){pg.innerHTML=''; for(let i=
 
 function goPage(p){currentPage=p; loadAllTasks();}
 
-  // ====== MONEY FLOW ======
+// ====== MONEY FLOW ======
 function submitProof(){
 let taskId=document.getElementById('proofTaskId').value;
 let proofText=document.getElementById('proofInput').value;
@@ -62,7 +62,7 @@ localStorage.setItem('mt_tasks',JSON.stringify(tasks));
 loadProofs(); loadPendingBal(); alert('Approved! Money sent to Pending Balance');
   }
 
-  function approvePendingBal(email){
+function approvePendingBal(email){
 let users=JSON.parse(localStorage.getItem('mt_users')||'[]');
 let u=users.find(x=>x.email===email);
 if(!u) return;
@@ -85,9 +85,9 @@ function loadProofs(){
 let proofs=JSON.parse(localStorage.getItem('mt_proofs')||'[]').filter(p=>p.status==='pending');
 let el=document.getElementById('adminProofs'); if(!el) return;
 el.innerHTML=proofs.length?proofs.map(p=>`<div style="border:1px solid #ccc;padding:10px;margin:5px"><b>${p.user}</b> - Task: ${p.taskId}<br>Proof: ${p.proof}<br><button onclick="approveProof('${p.id}')" style="background:#0a7e07;color:white;padding:5px 10px;border:none">Approve (to Pending)</button> <button onclick="rejectProof('${p.id}')" style="background:red;color:white;padding:5px 10px;border:none">Reject</button></div>`).join(''):'No pending proofs';
-             }
+}
 
-  function loadPendingBal(){
+function loadPendingBal(){
 let users=JSON.parse(localStorage.getItem('mt_users')||'[]').filter(u=>u.pd>0);
 let el=document.getElementById('pendingBalList'); if(!el) return;
 el.innerHTML=users.length?users.map(u=>`<div style="border:1px solid #ccc;padding:10px;margin:5px"><b>${u.email}</b> - Pending: ₦${u.pd}<br><button onclick="approvePendingBal('${u.email}')" style="background:#0a7e07;color:white;padding:5px 10px;border:none">Approve to Available</button></div>`).join(''):'No pending balances';
@@ -113,9 +113,4 @@ let u=users.find(x=>x.email===d.user); if(u) u.dep=(u.dep||0)+d.amount;
 localStorage.setItem('mt_deposits',JSON.stringify(deps));
 localStorage.setItem('mt_users',JSON.stringify(users));
 loadDeposits();
-  }
-
-  
-                     
-  
-  
+}
