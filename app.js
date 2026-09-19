@@ -41,7 +41,7 @@ actionSelect.innerHTML='<option value="Subscribe">Subscribe</option><option valu
 }else{
 actionSelect.innerHTML='<option value="Follow">Follow</option><option value="Like">Like</option><option value="Comment">Comment</option><option value="Custom Comment">Custom Comment</option>';
 }
-  }
+}
 function createTask(){
 let title=document.getElementById('taskTitle').value;
 let link=document.getElementById('taskLink').value;
@@ -88,7 +88,6 @@ localStorage.setItem('mt_proofs',JSON.stringify(proofs));
 localStorage.setItem('mt_users',JSON.stringify(users));
 localStorage.setItem('mt_tasks',JSON.stringify(tasks));
 loadProofs(); loadPendingBal(); alert('Approved! Money sent to Pending Balance');
-}
 function approvePendingBal(email){
 let users=JSON.parse(localStorage.getItem('mt_users')||'[]');
 let u=users.find(x=>x.email===email);
@@ -136,4 +135,4 @@ let u=users.find(x=>x.email===d.user); if(u) u.dep=(u.dep||0)+d.amount;
 localStorage.setItem('mt_deposits',JSON.stringify(deps));
 localStorage.setItem('mt_users',JSON.stringify(users));
 loadDeposits();
-  }
+}                                                                                                                                                                                              }
