@@ -1,100 +1,120 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Social Task</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>social-task1</title>
+<link rel="icon" href="logo.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0a7e07">
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
-body{background:#f5f5f5}
-.hidden{display:none!important}
-#auth{max-width:400px;margin:40px auto;background:#fff;padding:20px;border-radius:15px}
-#auth input{width:100%;padding:12px;margin:8px 0;border:1px solid #ddd;border-radius:8px}
-.active{background:#0a7e07;color:#fff;padding:10px;border-radius:8px;border:none;font-weight:bold}
-.inactive{background:#eee;padding:10px;border-radius:8px;border:none}
-.topbar{background:#0a7e07;color:#fff;padding:12px;display:flex;justify-content:space-between}
-.card{background:#fff;margin:10px;border-radius:15px;padding:15px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
-.task-fansup{background:#fff;border-radius:15px;padding:12px;margin:10px 0;border:1px solid #eee}
-.task-top{display:flex;gap:10px}
-.task-logo{width:45px;height:45px;background:#f0f0f0;border-radius:50%;display:flex;align-items:center;justify-content:center}
-.badge-gray{background:#f0f0f0;padding:4px 8px;border-radius:15px;font-size:10px}
-.task-bottom{display:flex;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid #eee}
-.start-btn{background:#0a7e07;color:#fff;border:none;padding:10px 20px;border-radius:20px;font-weight:bold}
-.sideMenu{position:fixed;top:0;left:-280px;width:260px;height:100%;background:#fff;z-index:1000;transition:.3s;padding:15px}
-.sideMenu.active{left:0}
-.menuItem{padding:12px;border-bottom:1px solid #eee;cursor:pointer;display:flex;justify-content:space-between}
-.popup{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:2000;padding:15px}
-.popupBox{background:#fff;width:100%;max-width:400px;border-radius:15px;padding:20px}
-.btn-approve{background:#0a7e07;color:#fff;border:none;padding:8px 12px;border-radius:6px}
-.btn-reject{background:#e53935;color:#fff;border:none;padding:8px 12px;border-radius:6px}
+body{background:#fff;color:#222}
+.top{background:#fff;padding:12px 15px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:20;border-bottom:1px solid #eee}
+.top-left{display:flex;align-items:center;gap:10px}
+.app-logo-img{width:36px;height:36px;border-radius:50%;background:#000;object-fit:cover}
+.menu-btn{width:36px;height:36px;border-radius:50%;border:1px solid #eee;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer}
+.menu-btn span{width:16px;height:2px;background:#222;border-radius:5px;display:block}
+.join-bar{background:#25D366;color:#fff;text-align:center;padding:10px;font-size:14px;position:sticky;top:60px;z-index:15}
+.join-bar a{background:#fff;color:#25D366;padding:5px 12px;border-radius:20px;text-decoration:none;font-weight:bold;margin-left:8px}
+#sideMenu{position:fixed;top:0;left:-270px;width:260px;height:100%;background:#fff;box-shadow:2px 0 15px rgba(0,0,0,.2);z-index:30;transition:.3s;padding:20px}
+#sideMenu.active{left:0}
+#sideMenu a{display:block;padding:13px 0;border-bottom:1px solid #f0f0f0;text-decoration:none;color:#222;font-weight:600}
+.card{background:#fff;margin:12px;border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,.06);padding:15px}
+.bal-home{background:#e8f5e9;border-radius:18px;padding:18px;margin:12px;border:1px solid #c8e6c9}
+.bal-home b{font-size:32px}
+.withdraw-green{background:#0a7e07;color:#fff;border:none;padding:14px;border-radius:30px;width:100%;font-weight:bold;font-size:16px;margin-top:14px;cursor:pointer}
+.btn{background:#0a7e07;color:#fff;border:none;padding:13px;border-radius:10px;width:100%;font-weight:bold;font-size:15px;cursor:pointer;margin-top:8px}
+.btn2{background:#222}
+.btn-outline{background:#fff;color:#0a7e07;border:2px solid #0a7e07}
+.btn-approve{background:#0a7e07;color:#fff;padding:10px 14px;border:none;border-radius:8px;font-weight:bold;margin:4px;cursor:pointer}
+.btn-reject{background:#e53935;color:#fff;padding:10px 14px;border:none;border-radius:8px;font-weight:bold;margin:4px;cursor:pointer}
+.input{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;margin:6px 0}
+.task-fansup{background:#fff;border:1px solid #eee;border-radius:16px;padding:14px;margin:10px 0}
+.task-top{display:flex;gap:12px}
+.task-logo{width:48px;height:48px;border-radius:14px;border:1px solid #eee;display:flex;align-items:center;justify-content:center;background:#fff;flex-shrink:0;overflow:hidden}
+.task-logo img{width:70%;height:70%;object-fit:contain}
+.badge-gray{background:#f3f3f3;padding:5px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.task-bottom{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
+.earn-text b{color:#0a7e07}
+.start-btn{border:1px solid #0a7e07;background:#fff;color:#0a7e07;padding:8px 16px;border-radius:20px;font-weight:bold;cursor:pointer}
+.popup{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:50;padding:15px}
+.hidden{display:none}
+.auth-tab{display:flex;gap:10px;margin-bottom:12px}
+.auth-tab button{flex:1;padding:12px;border-radius:10px;font-weight:bold;cursor:pointer}
+.active{background:#0a7e07;color:#fff;border:2px solid #0a7e07}
+.inactive{background:#fff;color:#0a7e07;border:2px solid #0a7e07}
+.ref-box{background:#e8f5e9;border:1px dashed #0a7e07;padding:12px;border-radius:10px;word-break:break-all;margin:10px 0}
+.home-header{display:flex;justify-content:space-between;align-items:center;padding:16px 12px 0 12px}
+.home-header h1{font-size:28px;font-weight:900}
+.plus-btn{width:38px;height:38px;background:#0a7e07;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;border:none;cursor:pointer}
+.ad-card{background:#e8f5e9;border-radius:18px;padding:18px;margin-bottom:12px}
 </style>
 </head>
 <body>
-<div id="auth">
-<h2 style="text-align:center">Social Task</h2>
-<div style="display:flex;gap:10px;margin:15px 0">
-<button id="tabSignIn" class="active" style="flex:1" onclick="setAuthMode('signin')">Sign In</button>
-<button id="tabSignUp" class="inactive" style="flex:1" onclick="setAuthMode('signup')">Sign Up</button>
+<div class="top"><div class="top-left"><img src="logo.png" class="app-logo-img"><b><span style="color:#0a7e07">social</span>-task1</b></div><div style="display:flex;gap:8px"><div style="width:36px;height:36px;border-radius:50%;border:1px solid #eee;display:flex;align-items:center;justify-content:center">🔔</div><div class="menu-btn" onclick="toggleMenu()"><span></span><span></span><span></span></div></div></div>
+<div class="join-bar">📢 Official Group <a href="https://chat.whatsapp.com/LYlXUpdqiL24XQ42rtZCl1?s=cl&p=a&mlu=4&ilr=4" target="_blank">Join WhatsApp</a></div>
+<div id="sideMenu">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:15px"><img src="logo.png" style="width:42px;height:42px;border-radius:50%"><b>social-task1</b></div>
+<a href="#" onclick="showPage('home');toggleMenu()">🏠 Dashboard</a>
+<a href="#" onclick="showPage('tasks');toggleMenu()">📋 All Tasks</a>
+<a href="#" onclick="showPage('post');toggleMenu()">➕ My Tasks / Post</a>
+<a href="#" onclick="showPage('referral');toggleMenu()">🔗 Refer & Earn 10%</a>
+<a href="#" onclick="showPage('withdraw');toggleMenu()">💸 Withdrawal</a>
+<a href="#" onclick="showPage('deposit');toggleMenu()">🏦 Deposit - <span id="menuDep">₦0</span></a>
+<a href="https://chat.whatsapp.com/LYlXUpdqiL24XQ42rtZCl1?s=cl&p=a&mlu=4&ilr=4" target="_blank" style="color:#25D366">💬 Join Group</a>
+<a href="#" id="adminLink" class="hidden" style="display:none" onclick="showPage('admin');toggleMenu()">👑 Admin Panel</a>
+<a href="#" onclick="logout()">📤 Logout</a>
 </div>
-<input id="aUser" class="hidden" placeholder="Username">
-<input id="aEmail" placeholder="Email">
-<input id="aPass" type="password" placeholder="Password">
-<input id="aCode" class="hidden" placeholder="Code">
-<input id="aRef" class="hidden" placeholder="Referral code">
-<div id="emailStatus" style="font-size:12px;color:#0a7e07;text-align:center"></div>
-<button id="authBtn" class="active" style="width:100%;padding:12px" onclick="handleAuth()">Sign In</button>
-<button id="switchBtn" style="width:100%;background:none;border:none;margin-top:10px;color:#0a7e07" onclick="toggleAuthMode()">Don't have account? Sign Up</button>
+<div id="auth" class="card" style="margin-top:20px;text-align:center">
+<img src="logo.png" style="width:90px;height:90px;border-radius:50%;margin:auto;display:block;border:3px solid #0a7e07">
+<h2>social-task1</h2><small>Complete • Earn • Withdraw</small>
+<div class="auth-tab" style="margin-top:15px">
+<button id="tabSignIn" class="active" onclick="setAuthMode('signin')">Sign In</button>
+<button id="tabSignUp" class="inactive" onclick="setAuthMode('signup')">Sign Up</button>
+</div>
+<div style="text-align:left">
+<input id="aUser" class="input hidden" placeholder="Username">
+<input id="aEmail" class="input" placeholder="Email">
+<input id="aPass" class="input" type="password" placeholder="Password">
+<input id="aRef" class="input hidden" placeholder="Referral Code (Optional)">
+<input id="aCode" class="input hidden" placeholder="Enter code sent to YOUR email">
+<button class="btn" id="authBtn" onclick="handleAuth()">Sign In</button>
+<button class="btn btn-outline" id="switchBtn" onclick="toggleAuthMode()" style="margin-top:8px">Don't have account? Sign Up</button>
+<p id="emailStatus" style="font-size:12px;color:green;margin-top:8px"></p>
+</div>
 </div>
 <div id="home" class="hidden">
-<div class="topbar"><span onclick="toggleMenu()">☰</span><span>Social Task</span><span onclick="logout()">Logout</span></div>
-<div id="sideMenu" class="sideMenu">
-<h3>Menu</h3>
-<div class="menuItem" onclick="showPage('home');toggleMenu()">Home</div>
-<div class="menuItem" onclick="showPage('tasks');toggleMenu()">All Tasks</div>
-<div class="menuItem" onclick="showPage('post');toggleMenu()">Post Task <span id="activeCount" style="background:#0a7e07;color:#fff;padding:2px 8px;border-radius:10px">0</span></div>
-<div class="menuItem" onclick="showPage('deposit');toggleMenu()">Deposit <span id="menuDep">₦0</span></div>
-<div class="menuItem" onclick="showPage('withdraw');toggleMenu()">Withdraw</div>
-<div class="menuItem" onclick="showPage('referral');toggleMenu()">Referral</div>
-<div id="adminLink" class="hidden menuItem" onclick="showPage('admin');toggleMenu()">Admin</div>
+<div class="home-header"><h1>Home</h1><button class="plus-btn" onclick="showPage('post')">+</button></div>
+<div class="bal-home">
+<small>Earning balance ⓘ</small><br><b id="avBal">₦0</b><br><small style="margin-top:10px;display:block">Pending balance: <b id="pdBal">₦0</b> (need admin approve)</small>
+<button class="withdraw-green" onclick="showPage('withdraw')">↗ Withdraw</button>
 </div>
-<div id="homePage">
-<div class="card" style="background:linear-gradient(135deg,#0a7e07,#0f9d0b);color:#fff">
-<div style="display:flex;justify-content:space-between"><div><small>Available</small><h3 id="avBal">₦0</h3></div><div><small>Pending</small><h3 id="pdBal">₦0</h3></div><div><small>Posting</small><h3 id="postDep">₦0</h3></div></div>
-<small>Total Spent: <span id="totalSpent">₦0</span></small>
+<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px">
+<h3 style="font-weight:800">Suggested tasks</h3><small style="color:#0a7e07;font-weight:bold;cursor:pointer" onclick="showPage('tasks')">View more ›</small>
 </div>
-<h4 style="margin:15px">Available Tasks</h4>
-<div id="homeTasks"></div>
+<div id="homeTasks" style="padding:0 12px"></div>
   </div>
-  <div id="tasks" class="hidden"><div class="card"><h3>All Tasks</h3><div id="allTasks"></div><div style="display:flex;gap:10px;justify-content:center;margin:15px 0"><button onclick="changePage(-1)">Prev</button><button onclick="changePage(1)">Next</button></div></div></div>
-<div id="post" class="hidden">
-<div class="card">
-<h3>Post Task</h3>
-<div id="appGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:15px 0"></div>
-<div id="selectedAppText" style="background:#e8f5e9;padding:8px;border-radius:8px;text-align:center;font-weight:bold">Selected: Facebook</div>
-<label>Task Type</label><select id="pType" style="width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;margin:8px 0"></select>
-<div id="priceInfo" style="background:#fff3cd;padding:8px;border-radius:8px"></div>
-<div id="customBox" class="hidden" style="margin:12px 0;background:#f0fff0;padding:10px;border-radius:10px;border:1px dashed #0a7e07">
-<label style="font-weight:bold;font-size:12px">Custom Comment - Many Comments</label>
-<textarea id="customCommentsInput" style="width:100%;height:110px;padding:10px;border:1px solid #0a7e07;border-radius:10px;margin-top:6px" placeholder="Type many comments one per line OR comma:
-Nice video
-Great job
-Love it"></textarea>
-<small style="color:#0a7e07">1 per user rotation - no popup</small>
-</div>
-<label>Link</label><input id="pLink" placeholder="https://..." style="width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;margin:8px 0">
-<label>Qty</label><input id="pQty" type="number" value="1" min="1" style="width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;margin:8px 0">
-<button onclick="createTask()" style="width:100%;padding:14px;background:#0a7e07;color:#fff;border:none;border-radius:10px;font-weight:bold">Post Task</button>
-</div>
-<div class="card"><h4>My Tasks</h4><div id="emptyState" style="text-align:center;color:#888;padding:20px">No tasks</div><div id="myCreatedList"></div></div>
-</div>
-<div id="deposit" class="hidden"><div class="card"><h3>Deposit</h3><p>Bal: <b id="depBalText">₦0</b></p><input id="dName" placeholder="Name" style="width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;margin:8px 0"><input id="dAmt" type="number" placeholder="Amount" style="width:100%;padding:12px;border:1px solid #ddd;border-radius:8px"><button onclick="submitDeposit()" style="width:100%;padding:12px;background:#0a7e07;color:#fff;border:none;border-radius:8px">Submit</button><div id="myDeposits"></div></div></div>
-<div id="withdraw" class="hidden"><div class="card"><h3>Withdraw</h3><div style="display:flex;gap:20px"><div>Av: <b id="wAvBal">₦0</b></div><div>Pd: <b id="wPdBal">₦0</b></div></div><div id="wInfo" style="background:#e8f5e9;padding:8px;border-radius:8px;margin:8px 0"></div><input id="wAccName" placeholder="Acc Name" style="width:100%;padding:12px;margin:6px 0"><input id="wAccNum" placeholder="Acc Num" style="width:100%;padding:12px;margin:6px 0"><input id="wBank" placeholder="Bank" style="width:100%;padding:12px;margin:6px 0"><input id="wAmt" type="number" placeholder="Amt min 300" style="width:100%;padding:12px;margin:6px 0"><button onclick="requestWithdraw()" style="width:100%;padding:12px;background:#0a7e07;color:#fff;border:none;border-radius:8px">Request</button><div id="myWithdrawals"></div></div></div>
-<div id="referral" class="hidden"><div class="card"><h3>Referral</h3><p>Code: <b id="myRefCode"></b></p><p id="myRefLink" style="word-break:break-all;background:#f5f5f5;padding:8px;border-radius:8px"></p><button onclick="copyRef()" style="padding:10px;background:#0a7e07;color:#fff;border:none;border-radius:8px;width:100%;margin:10px 0">Copy</button><p>Refs: <b id="refCount">0</b> | Earn: <b id="refEarn">₦0</b></p><div id="myReferralsList"></div></div></div>
-<div id="admin" class="hidden"><div class="card"><h3>Admin</h3><div style="display:flex;gap:6px;flex-wrap:wrap"><button onclick="showAdmin('users')" class="btn-approve">Users</button><button onclick="showAdmin('pendingBal')" class="btn-approve">Pending</button><button onclick="showAdmin('proofs')" class="btn-approve">Proofs</button><button onclick="showAdmin('depositsAdmin')" class="btn-approve">Deposits</button><button onclick="showAdmin('withdrawalsAdmin')" class="btn-approve">Withdraws</button><button onclick="showAdmin('allTasksAdmin')" class="btn-approve">Tasks</button></div><div id="adminContent"></div></div></div>
-</div>
-<div id="taskPopup" class="popup"><div class="popupBox"><h3 id="popTitle">Task</h3><a id="popLink" href="#" target="_blank" style="display:block;background:#0a7e07;color:#fff;text-align:center;padding:12px;border-radius:8px;text-decoration:none;margin:10px 0">Open Link</a><div id="popCustomList"></div><input id="popHandle" placeholder="Username" style="width:100%;padding:10px;margin:8px 0"><input id="popFile" type="file" accept="image/*" style="width:100%;margin:8px 0"><div style="display:flex;gap:10px"><button onclick="closePopup('taskPopup')" style="flex:1;padding:10px;background:#eee;border:none;border-radius:8px">Cancel</button><button onclick="submitProof()" style="flex:1;padding:10px;background:#0a7e07;color:#fff;border:none;border-radius:8px">Submit</button></div></div></div>
-<div id="successPopup" class="popup"><div class="popupBox" style="text-align:center"><h3>Submitted!</h3><p>Wait for admin - Pending first</p><button onclick="closePopup('successPopup')" style="padding:10px 20px;background:#0a7e07;color:#fff;border:none;border-radius:8px;margin-top:10px">OK</button></div></div>
-<div id="lowBalPopup" class="popup"><div class="popupBox" style="text-align:center"><div id="lowBalText"></div><button onclick="closePopup('lowBalPopup')" style="padding:10px;background:#eee;border:none;border-radius:8px">Cancel</button><button onclick="goToDepositFromLowBal()" style="padding:10px;background:#0a7e07;color:#fff;border:none;border-radius:8px">Deposit</button></div></div>
-<script src="app.js?v=1400"></script>
-</body>
-                                                                                                                                                                                                                                                                                                                                                                                                </html>
+emailjs.init("eOnK3qvUFiw89dhdV");
+const SERVICE_ID="service_147bn6m"; const TEMPLATE_ID="template_kndbrqg";
+const ADMIN="markobinna120@gmail.com";
+const APPS=[{id:"Facebook",logo:"https://cdn.simpleicons.org/facebook/1877F2"},{id:"Instagram",logo:"https://cdn.simpleicons.org/instagram/E4405F"},{id:"TikTok",logo:"https://cdn.simpleicons.org/tiktok/000000"},{id:"YouTube",logo:"https://cdn.simpleicons.org/youtube/FF0000"},{id:"Twitter/X",logo:"https://cdn.simpleicons.org/x/000000"},{id:"WhatsApp",logo:"https://cdn.simpleicons.org/whatsapp/25D366"},{id:"Telegram",logo:"https://cdn.simpleicons.org/telegram/26A5E4"},{id:"Website",logo:"https://cdn.simpleicons.org/googlechrome/4285F4"}];
+const PRICES={"Like a post":{adv:30,earn:20},"Like a video":{adv:30,earn:20},"Watch a video":{adv:35,earn:25},"View a video":{adv:35,earn:25},"Comment on a video":{adv:40,earn:25},"Custom comment":{adv:50,earn:30},"Share a post":{adv:40,earn:25},"Join a group":{adv:50,earn:30},"Follow a channel":{adv:50,earn:30},"Start a telegram bot":{adv:50,earn:30},"Website Signup":{adv:80,earn:50},"Website Vote":{adv:60,earn:40},"Website Visit":{adv:30,earn:20}};
+let curUser=null,curTask=null,currentPage=1,perPage=10,selectedApp="Facebook"; let authMode='signin';
+function genRefCode(email){return email.split('@')[0].replace(/[^a-z0-9]/gi,'').toLowerCase()+Math.floor(100+Math.random()*900);}
+function init(){
+let users=JSON.parse(localStorage.getItem('mt_users')||'[]');
+if(!users.find(u=>u.email===ADMIN)){users.push({email:ADMIN,username:'Admin Mark',password:'Admin123',status:'active',av:0,pd:0,dep:0,totalSpent:0,refCode:'admin120',referredBy:null,refEarn:0,hasWithdrawn:false});}
+users.forEach(u=>{if(!u.refCode)u.refCode=genRefCode(u.email); if(u.refEarn===undefined)u.refEarn=0; if(u.hasWithdrawn===undefined)u.hasWithdrawn=false; if(u.totalSpent===undefined)u.totalSpent=0; if(u.av===undefined)u.av=0; if(u.pd===undefined)u.pd=0; if(u.dep===undefined)u.dep=0;});
+localStorage.setItem('mt_users',JSON.stringify(users));
+let grid=document.getElementById('appGrid');
+if(grid){grid.innerHTML='';APPS.forEach(a=>{let d=document.createElement('div');d.style.cssText='background:#fff;border:2px solid #eee;border-radius:14px;padding:12px;text-align:center;cursor:pointer';d.innerHTML=`<img src="${a.logo}" style="width:45px;height:45px;border-radius:50%"><br><small style="font-weight:bold;font-size:11px">${a.id}</small>`;d.onclick=()=>selectApp(a.id);d.id='app_'+a.id;grid.appendChild(d);});selectApp('Facebook');}
+let urlParams=new URLSearchParams(window.location.search);let ref=urlParams.get('ref');if(ref){let refInput=document.getElementById('aRef'); if(refInput){refInput.value=ref; setAuthMode('signup');}}
+setAuthMode('signin');checkLogin();
+}
+function setAuthMode(mode){authMode=mode;let tabIn=document.getElementById('tabSignIn'); let tabUp=document.getElementById('tabSignUp');let userInput=document.getElementById('aUser'); let authBtn=document.getElementById('authBtn');let switchBtn=document.getElementById('switchBtn'); let codeInput=document.getElementById('aCode'); let refInput=document.getElementById('aRef');if(mode==='signin'){tabIn.className='active'; tabUp.className='inactive';userInput.classList.add('hidden'); codeInput.classList.add('hidden'); refInput.classList.add('hidden');authBtn.textContent='Sign In'; switchBtn.textContent="Don't have account? Sign Up";}else{tabIn.className='inactive'; tabUp.className='active';userInput.classList.remove('hidden'); refInput.classList.remove('hidden');authBtn.textContent='Sign Up - Send Code'; switchBtn.textContent="Already have account? Sign In";}document.getElementById('emailStatus').textContent='';}
+function toggleAuthMode(){setAuthMode(authMode==='signin'?'signup':'signin');}
+function selectApp(id){selectedApp=id;document.querySelectorAll('#appGrid div').forEach(x=>x.style.borderColor='#eee');let el=document.getElementById('app_'+id);if(el)el.style.borderColor='#0a7e07';document.getElementById('selectedAppText').textContent='Selected: '+id+' ✓';loadTypes();}
+function loadTypes(){let sel=document.getElementById('pType');if(!sel)return;sel.innerHTML='';let opts=[];if(selectedApp==='YouTube'){opts=["Like a post","Watch a video","Comment on a video","Custom comment","Share a post"];}else if(selectedApp==='Facebook'){opts=["Like a video","View a video","Comment on a video","Custom comment","Share a post","Join a group"];}else if(selectedApp==='Instagram'){opts=["Like a video","View a video","Comment on a video","Custom comment","Share a post"];}else if(selectedApp==='TikTok'||selectedApp==='Twitter/X'){opts=["Like a video","View a video","Comment on a video","Custom comment","Share a post"];}else if(selectedApp==='WhatsApp'){opts=["Join a group","Follow a channel"];}else if(selectedApp==='Telegram'){opts=["Join a group","Follow a channel","Start a telegram bot"];}else if(selectedApp==='Website'){opts=["Website Signup","Website Vote","Website Visit"];}opts.forEach(o=>{let e=document.createElement('option');e.value=o;let p=PRICES[o]?PRICES[o].adv:30;e.textContent=o+' - ₦'+p;sel.appendChild(e);});sel.onchange=updatePrice;document.getElementById('pQty').oninput=updatePrice;updatePrice();}
+function updatePrice(){let t=document.getElementById('pType').value;let q=parseInt(document.getElementById('pQty').value)||0;if(!PRICES[t])return;document.getElementById('priceInfo').innerHTML=`You will pay: <b>₦${PRICES[t].adv*q}</b> for ${q} units`;}  
