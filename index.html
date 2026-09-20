@@ -1,84 +1,153 @@
-emailjs.init("eOnK3qvUFiw89dhdV");
-const SERVICE_ID="service_147bn6m"; const TEMPLATE_ID="template_kndbrqg";
-const ADMIN="markobinna120@gmail.com";
-const APPS=[{id:"Facebook",logo:"https://cdn.simpleicons.org/facebook/1877F2"},{id:"Instagram",logo:"https://cdn.simpleicons.org/instagram/E4405F"},{id:"TikTok",logo:"https://cdn.simpleicons.org/tiktok/000000"},{id:"YouTube",logo:"https://cdn.simpleicons.org/youtube/FF0000"},{id:"Twitter/X",logo:"https://cdn.simpleicons.org/x/000000"},{id:"WhatsApp",logo:"https://cdn.simpleicons.org/whatsapp/25D366"},{id:"Telegram",logo:"https://cdn.simpleicons.org/telegram/26A5E4"},{id:"Website",logo:"https://cdn.simpleicons.org/googlechrome/4285F4"}];
-const PRICES={"Like a post":{adv:12,earn:4},"Like a video":{adv:12,earn:4},"Watch a video":{adv:12,earn:4},"View a video":{adv:12,earn:4},"Comment on a video":{adv:12,earn:5},"Custom comment":{adv:35,earn:8},"Share a post":{adv:12,earn:4},"Join a group":{adv:30,earn:7},"Follow a channel":{adv:30,earn:7},"Follow a page":{adv:12,earn:5},"Subscribe to a channel":{adv:30,earn:7},"Start a telegram bot":{adv:35,earn:10},"Website Signup":{adv:35,earn:10},"Website Vote":{adv:10,earn:3},"Website Visit":{adv:10,earn:3}};
-let curUser=null,curTask=null,currentPage=1,perPage=10,selectedApp="Facebook"; let authMode='signin';
-function genRefCode(email){return email.split('@')[0].replace(/[^a-z0-9]/gi,'').toLowerCase()+Math.floor(100+Math.random()*900);}
-function init(){
-let users=JSON.parse(localStorage.getItem('mt_users')||'[]');
-if(!users.find(u=>u.email===ADMIN)){users.push({email:ADMIN,username:'Admin Mark',password:'Admin123',status:'active',av:0,pd:0,dep:0,totalSpent:0,refCode:'admin120',referredBy:null,refEarn:0,hasWithdrawn:false});}
-users.forEach(u=>{if(!u.refCode)u.refCode=genRefCode(u.email); if(u.refEarn===undefined)u.refEarn=0; if(u.hasWithdrawn===undefined)u.hasWithdrawn=false; if(u.totalSpent===undefined)u.totalSpent=0; if(u.av===undefined)u.av=0; if(u.pd===undefined)u.pd=0; if(u.dep===undefined)u.dep=0;});
-localStorage.setItem('mt_users',JSON.stringify(users));
-let grid=document.getElementById('appGrid');
-if(grid){grid.innerHTML='';APPS.forEach(a=>{let d=document.createElement('div');d.style.cssText='background:#fff;border:2px solid #eee;border-radius:14px;padding:12px;text-align:center;cursor:pointer';d.innerHTML=`<img src="${a.logo}" style="width:45px;height:45px;border-radius:50%"><br><small style="font-weight:bold;font-size:11px">${a.id}</small>`;d.onclick=()=>selectApp(a.id);d.id='app_'+a.id;grid.appendChild(d);});selectApp('Facebook');}
-let urlParams=new URLSearchParams(window.location.search);let ref=urlParams.get('ref');if(ref){let refInput=document.getElementById('aRef'); if(refInput){refInput.value=ref; setAuthMode('signup');}}
-setAuthMode('signin');checkLogin();
-}
-function setAuthMode(mode){authMode=mode;let tabIn=document.getElementById('tabSignIn'); let tabUp=document.getElementById('tabSignUp');let userInput=document.getElementById('aUser'); let authBtn=document.getElementById('authBtn');let switchBtn=document.getElementById('switchBtn'); let codeInput=document.getElementById('aCode'); let refInput=document.getElementById('aRef');if(!tabIn)return;if(mode==='signin'){tabIn.className='active'; tabUp.className='inactive';userInput.classList.add('hidden'); codeInput.classList.add('hidden'); refInput.classList.add('hidden');authBtn.textContent='Sign In'; switchBtn.textContent="Don't have account? Sign Up";}else{tabIn.className='inactive'; tabUp.className='active';userInput.classList.remove('hidden'); refInput.classList.remove('hidden');authBtn.textContent='Sign Up - Send Code'; switchBtn.textContent="Already have account? Sign In";}document.getElementById('emailStatus').textContent='';}
-function toggleAuthMode(){setAuthMode(authMode==='signin'?'signup':'signin');}
-function selectApp(id){selectedApp=id;document.querySelectorAll('#appGrid div').forEach(x=>x.style.borderColor='#eee');let el=document.getElementById('app_'+id);if(el)el.style.borderColor='#0a7e07';document.getElementById('selectedAppText').textContent='Selected: '+id+' ✓';loadTypes();}
-function loadTypes(){let sel=document.getElementById('pType');if(!sel)return;sel.innerHTML='';let opts=[];
-if(selectedApp==='YouTube'){opts=["Subscribe to a channel","Like a post","Watch a video","Comment on a video","Custom comment","Share a post"];}
-else if(selectedApp==='Facebook'){opts=["Follow a page","Like a video","View a video","Comment on a video","Custom comment","Share a post","Join a group"];}
-else if(selectedApp==='Instagram'){opts=["Follow a page","Like a video","View a video","Comment on a video","Custom comment","Share a post"];}
-else if(selectedApp==='TikTok'||selectedApp==='Twitter/X'){opts=["Follow a page","Like a video","View a video","Comment on a video","Custom comment","Share a post"];}
-else if(selectedApp==='WhatsApp'){opts=["Join a group","Follow a channel"];}
-else if(selectedApp==='Telegram'){opts=["Join a group","Follow/subscribe to a channel","Start a telegram bot"];}
-else if(selectedApp==='Website'){opts=["Website Signup","Website Vote","Website Visit"];}
-opts.forEach(o=>{let e=document.createElement('option');e.value=o;let p=PRICES[o]?PRICES[o].adv:30;e.textContent=o+' - ₦'+p;sel.appendChild(e);});sel.onchange=updatePrice;document.getElementById('pQty').oninput=updatePrice;updatePrice();}
-function updatePrice(){let t=document.getElementById('pType').value;let q=parseInt(document.getElementById('pQty').value)||0;if(!PRICES[t])return;document.getElementById('priceInfo').innerHTML=`You will pay: <b>₦${PRICES[t].adv*q}</b> for ${q} units`;}
-function checkLogin(){let email=localStorage.getItem('mt_cur');if(!email){showAuth();return;}let users=JSON.parse(localStorage.getItem('mt_users')||'[]');curUser=users.find(u=>u.email===email);if(!curUser){showAuth();return;}if(curUser.status && curUser.status!=='active'){alert('Account suspended');localStorage.removeItem('mt_cur');showAuth();return;}document.getElementById('auth').classList.add('hidden');document.getElementById('home').classList.remove('hidden');if(curUser.av===undefined)curUser.av=0; if(curUser.pd===undefined)curUser.pd=0; if(curUser.dep===undefined)curUser.dep=0; if(!curUser.refCode)curUser.refCode=genRefCode(curUser.email); if(curUser.totalSpent===undefined)curUser.totalSpent=0;document.getElementById('avBal').textContent='₦'+(curUser.av||0);document.getElementById('pdBal').textContent='₦'+(curUser.pd||0);document.getElementById('postDep').textContent='₦'+(curUser.dep||0);if(document.getElementById('menuDep'))document.getElementById('menuDep').textContent='₦'+(curUser.dep||0);if(document.getElementById('totalSpent'))document.getElementById('totalSpent').textContent='₦'+(curUser.totalSpent||0);let adminLink=document.getElementById('adminLink');if(curUser.email===ADMIN){adminLink.classList.remove('hidden');adminLink.style.display='block';}else{adminLink.classList.add('hidden');adminLink.style.display='none';}loadHomeTasks();loadAllTasks();loadMyDeposits();loadReferral();loadWithdrawPage();loadMyCreatedTasks();}
-function showAuth(){document.getElementById('auth').classList.remove('hidden');document.getElementById('home').classList.add('hidden');}
-function toggleMenu(){document.getElementById('sideMenu').classList.toggle('active')}
-function showPage(p){['home','tasks','post','deposit','admin','referral','withdraw'].forEach(id=>{let el=document.getElementById(id);if(el)el.classList.add('hidden')});let t=document.getElementById(p);if(t)t.classList.remove('hidden');if(p==='tasks')loadAllTasks();if(p==='deposit')loadMyDeposits();if(p==='post'){document.getElementById('postDep').textContent='₦'+(curUser.dep||0);loadMyCreatedTasks();}if(p==='referral')loadReferral();if(p==='withdraw')loadWithdrawPage();}
-let codeSent='',tempData={};
-async function handleAuth(){let user=document.getElementById('aUser').value.trim();let email=document.getElementById('aEmail').value.trim();let pass=document.getElementById('aPass').value.trim();let codeInput=document.getElementById('aCode');let refCodeInput=document.getElementById('aRef').value.trim().toLowerCase();let users=JSON.parse(localStorage.getItem('mt_users')||'[]');let exists=users.find(u=>u.email===email);if(authMode==='signin'){if(!email||!pass){alert('Fill email and password');return;}if(!exists){alert('Account not found');setAuthMode('signup');return;}if(exists.password!==pass){alert('Wrong password');return;}if(exists.status!=='active'){alert('Suspended');return;}localStorage.setItem('mt_cur',email);location.reload();return;}if(authMode==='signup'){if(codeInput.classList.contains('hidden')){if(!user||!email||!pass){alert('Fill all');return;}if(exists){alert('Email exists');setAuthMode('signin');return;}let referredByUser=null;if(refCodeInput){referredByUser=users.find(u=>u.refCode.toLowerCase()===refCodeInput);if(!referredByUser){alert('Invalid referral code');return;}if(referredByUser.email===email){alert('Cannot refer yourself');return;}}tempData={user,email,pass,referredBy:referredByUser?referredByUser.email:null};codeSent=Math.floor(100000+Math.random()*900000).toString();document.getElementById('emailStatus').textContent='Sending to '+email+'...';try{await emailjs.send(SERVICE_ID,TEMPLATE_ID,{to_email:email,code:codeSent,username:user});document.getElementById('emailStatus').textContent='Code sent to '+email;codeInput.classList.remove('hidden');document.getElementById('authBtn').textContent='Verify Code';}catch(e){document.getElementById('emailStatus').textContent='Code: '+codeSent;codeInput.classList.remove('hidden');document.getElementById('authBtn').textContent='Verify Code';}}else{if(document.getElementById('aCode').value.trim()!==codeSent){alert('Wrong code');return;}let newRef=genRefCode(tempData.email);users.push({email:tempData.email,username:tempData.user,password:tempData.pass,status:'active',av:0,pd:0,dep:0,totalSpent:0,refCode:newRef,referredBy:tempData.referredBy,refEarn:0,hasWithdrawn:false});localStorage.setItem('mt_users',JSON.stringify(users));localStorage.setItem('mt_cur',tempData.email);alert('Account created!');location.reload();}}}
-function logout(){localStorage.removeItem('mt_cur');location.reload();}
-function taskHtml(t){let app=APPS.find(a=>a.id===t.app);let img=app?`<img src="${app.logo}">`:'';let earn=t.priceEarn||20;let copyPreview='';if(t.type==='Custom comment' && t.customComments && t.customComments.length){copyPreview=`<div style="background:#fff3cd;padding:5px;margin-top:5px;border-radius:5px;border:1px dashed #0a7e07;font-size:11px">📋 Copy: ${t.customComments[0].substring(0,25)}...</div>`;}return `<div class="task-fansup"><div class="task-top"><div class="task-logo">${img}</div><div style="flex:1"><div style="font-size:12px;color:#888">${t.app} • Task</div><div style="font-weight:800;font-size:14px">${t.type}</div><div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><span class="badge-gray">👥 ${t.remaining} slots left</span><span class="badge-gray">☑ Verification in 24-48h</span></div>${copyPreview}</div></div><div class="task-bottom"><div class="earn-text"><small style="color:#888;font-size:11px">Earn</small><br><b>₦${earn}</b></div><button class="start-btn" onclick="openTask('${t.id}')">Start Task</button></div></div>`;}
-function getMyDoneIds(){let p=JSON.parse(localStorage.getItem('mt_proofs')||'[]');return p.filter(x=>x.user===curUser.email).map(x=>x.taskId);}
-function loadHomeTasks(){let done=getMyDoneIds();let tasks=JSON.parse(localStorage.getItem('mt_tasks')||'[]').filter(t=>t.remaining>0&&t.owner!==curUser.email&&!done.includes(t.id)).slice(0,6);document.getElementById('homeTasks').innerHTML=tasks.length?tasks.map(taskHtml).join(''):'<div style="text-align:center;color:#888;padding:20px">There are no available tasks</div>';}
-function loadAllTasks(){let done=getMyDoneIds();let tasks=JSON.parse(localStorage.getItem('mt_tasks')||'[]').filter(t=>t.remaining>0&&t.owner!==curUser.email&&!done.includes(t.id));let start=(currentPage-1)*perPage;let pag=tasks.slice(start,start+perPage);document.getElementById('allTasks').innerHTML=pag.length?pag.map(taskHtml).join(''):'<div style="text-align:center;color:#888;padding:20px">There are no available tasks<br><small>Post task with admin, login with another account to see it</small></div>';}
-function changePage(d){currentPage+=d;if(currentPage<1)currentPage=1;loadAllTasks();}
-function loadMyCreatedTasks(){if(!curUser)return;let tasks=JSON.parse(localStorage.getItem('mt_tasks')||'[]').filter(t=>t.owner===curUser.email);if(document.getElementById('activeCount'))document.getElementById('activeCount').textContent=tasks.length;let list=document.getElementById('myCreatedList');let empty=document.getElementById('emptyState');if(!list)return;if(tasks.length){if(empty)empty.style.display='none';list.innerHTML=tasks.map(t=>`<div style="background:#fff;border:1px solid #eee;padding:12px;border-radius:12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center"><div><b>${t.name}</b><br><small>${t.remaining}/${t.qty} left</small></div><button onclick="deleteTask('${t.id}');loadMyCreatedTasks()" style="background:#ffe9e9;color:#e53935;border:none;padding:6px 10px;border-radius:8px">Delete</button></div>`).join('');}else{if(empty)empty.style.display='block';list.innerHTML='';}}
-function createTask(){let type=document.getElementById('pType').value;let link=document.getElementById('pLink').value.trim();let qty=parseInt(document.getElementById('pQty').value);if(!link||!qty){alert('Fill all');return;}let price=PRICES[type];let total=price.adv*qty;let myBal=curUser.dep||0;if(myBal<total){document.getElementById('lowBalText').innerHTML=`<b>Insufficient Balance</b><br><br>Current Balance: <b style="color:#e53935">₦${myBal}</b><br>Required: <b>₦${total}</b><br>Shortage: ₦${total-myBal}<br><br>Fund your wallet to continue`;document.getElementById('lowBalPopup').style.display='flex';return;}let tasks=JSON.parse(localStorage.getItem('mt_tasks')||'[]');let custom=[];if(type==='Custom comment'){let c=prompt('Enter the comment you want earners to COPY');if(c)custom=[c.trim()];}let task={id:'t_'+Date.now(),name:type+' on '+selectedApp,app:selectedApp,type,link,qty,remaining:qty,priceAdv:price.adv,priceEarn:price.earn,owner:curUser.email,customComments:custom,created:Date.now()};tasks.push(task);localStorage.setItem('mt_tasks',JSON.stringify(tasks));curUser.dep-=total;curUser.totalSpent=(curUser.totalSpent||0)+total;let users=JSON.parse(localStorage.getItem('mt_users')||'[]');let idx=users.findIndex(u=>u.email===curUser.email);users[idx]=curUser;localStorage.setItem('mt_users',JSON.stringify(users));alert('Task posted!');document.getElementById('pLink').value='';loadMyCreatedTasks();checkLogin();showPage('post');}
-function goToDepositFromLowBal(){closePopup('lowBalPopup');showPage('deposit');}
-function openTask(id){let tasks=JSON.parse(localStorage.getItem('mt_tasks')||'[]');curTask=tasks.find(t=>t.id===id);if(!curTask){alert('Not found');return;}document.getElementById('popTitle').textContent=curTask.name;document.getElementById('popLink').href=curTask.link;let cl=document.getElementById('popCustomList');if(cl){if(curTask.customComments&&curTask.customComments.length){let txt=curTask.customComments[0];cl.innerHTML=`<div style="background:#fff3cd;padding:10px;border-radius:8px;border:1px dashed #0a7e07;margin-top:10px"><b>Comment to copy:</b><br><span id="copyTxt">${txt}</span><br><button onclick="navigator.clipboard.writeText(document.getElementById('copyTxt').innerText);alert('Copied! Now paste')" style="margin-top:8px;background:#ff9800;color:white;border:none;padding:8px 14px;border-radius:6px;cursor:pointer;font-weight:bold">📋 Copy Code</button></div>`;}else{cl.innerHTML='';}}document.getElementById('taskPopup').style.display='flex';}
-function closePopup(id){document.getElementById(id).style.display='none';}
-function submitProof(){let handle=document.getElementById('popHandle').value.trim();let file=document.getElementById('popFile').files[0];if(!handle||!file){alert('Fill handle and proof');return;}let proofs=JSON.parse(localStorage.getItem('mt_proofs')||'[]');if(proofs.find(p=>p.taskId===curTask.id&&p.user===curUser.email)){alert('Already done');return;}let reader=new FileReader();reader.onload=function(e){let proofs=JSON.parse(localStorage.getItem('mt_proofs')||'[]');proofs.push({id:'p_'+Date.now(),taskId:curTask.id,taskName:curTask.name,owner:curTask.owner,user:curUser.email,handle,proof:e.target.result,status:'pending',type:curTask.type,app:curTask.app,created:Date.now()});localStorage.setItem('mt_proofs',JSON.stringify(proofs));closePopup('taskPopup');document.getElementById('successPopup').style.display='flex';loadHomeTasks();loadAllTasks();};reader.readAsDataURL(file);}
-function loadReferral(){if(!curUser) return;let baseUrl=window.location.origin+window.location.pathname;let link=baseUrl+'?ref='+curUser.refCode;document.getElementById('myRefCode').textContent=curUser.refCode;document.getElementById('myRefLink').textContent=link;let users=JSON.parse(localStorage.getItem('mt_users')||'[]');let myRefs=users.filter(u=>u.referredBy===curUser.email);document.getElementById('refCount').textContent=myRefs.length;document.getElementById('refEarn').textContent='₦'+(curUser.refEarn||0);document.getElementById('myReferralsList').innerHTML=myRefs.length?myRefs.map(u=>`<div style="border:1px solid #eee;padding:10px;margin:5px 0;border-radius:8px"><b>${u.username}</b> - ${u.email}<br><small>${u.hasWithdrawn?'✅ Has withdrawn - You earned 10%':'⏳ No withdrawal yet'}</small></div>`).join(''):'No referrals yet';}
-function copyRef(){let link=document.getElementById('myRefLink').textContent; navigator.clipboard.writeText(link).then(()=>alert('Copied!'));}
-function loadWithdrawPage(){if(!curUser) return;document.getElementById('wAvBal').textContent='₦'+(curUser.av||0);document.getElementById('wPdBal').textContent='₦'+(curUser.pd||0);if(document.getElementById('wInfo'))document.getElementById('wInfo').innerHTML=`Min: ₦300 | Charge: ₦20`;let withdrawals=JSON.parse(localStorage.getItem('mt_withdrawals')||'[]').filter(w=>w.user===curUser.email);document.getElementById('myWithdrawals').innerHTML=withdrawals.length?withdrawals.map(w=>`<div style="border:1px solid #eee;padding:10px;margin:5px 0;border-radius:8px">₦${w.amount} → Net ₦${w.net}<br><small>${w.bank} • ${w.accNum}</small><br><b>${w.status}</b></div>`).join(''):'No withdrawals';}
-function requestWithdraw(){let accName=document.getElementById('wAccName').value.trim();let accNum=document.getElementById('wAccNum').value.trim();let bank=document.getElementById('wBank').value.trim();let amt=parseInt(document.getElementById('wAmt').value);if(!accName||!accNum||!bank||!amt){alert('Fill all');return;}if(amt<300){alert('Minimum is ₦300');return;}if((curUser.av||0)<amt){alert('Insufficient Available.');return;}let withdrawals=JSON.parse(localStorage.getItem('mt_withdrawals')||'[]');withdrawals.push({id:'w_'+Date.now(),user:curUser.email,accName,accNum,bank,amount:amt,charge:20,net:amt-20,status:'pending',created:Date.now()});localStorage.setItem('mt_withdrawals',JSON.stringify(withdrawals));curUser.av-=amt;let users=JSON.parse(localStorage.getItem('mt_users')||'[]');let idx=users.findIndex(u=>u.email===curUser.email);users[idx]=curUser;localStorage.setItem('mt_users',JSON.stringify(users));alert('Requested! Net ₦'+(amt-20));loadWithdrawPage();checkLogin();}
-function submitDeposit(){let name=document.getElementById('dName').value.trim();let amt=parseInt(document.getElementById('dAmt').value);if(!name||!amt){alert('Fill all');return;}let deps=JSON.parse(localStorage.getItem('mt_deposits')||'[]');deps.push({id:'d_'+Date.now(),user:curUser.email,accountName:name,amount:amt,status:'pending',created:Date.now()});localStorage.setItem('mt_deposits',JSON.stringify(deps));alert('Deposit sent');loadMyDeposits();}
-function loadMyDeposits(){let deps=JSON.parse(localStorage.getItem('mt_deposits')||'[]').filter(d=>d.user===curUser.email);document.getElementById('myDeposits').innerHTML=deps.length?deps.map(d=>`<div style="border:1px solid #eee;padding:8px;margin:5px 0;border-radius:8px">${d.accountName} - ₦${d.amount} - <b>${d.status}</b></div>`).join(''):'No deposits'; if(document.getElementById('depBalText'))document.getElementById('depBalText').textContent='₦'+(curUser.dep||0);}
-function showAdmin(tab){if(curUser.email!==ADMIN){alert('Only admin');return;}let c=document.getElementById('adminContent');if(tab==='users'){let users=JSON.parse(localStorage.getItem('mt_users')||'[]');c.innerHTML='<h4>Users</h4>'+users.map(u=>`<div style="padding:12px;border:1px solid #eee;margin:8px 0;border-radius:8px"><b>${u.username}</b> - ${u.email}<br>Av ₦${u.av||0} | Pd ₦${u.pd||0} | Dep ₦${u.dep||0}<br>${u.email!==ADMIN? `<button class="btn-reject" onclick="tempDeleteUser('${u.email}')">Suspend</button><button class="btn-reject" style="background:#000" onclick="permanentDeleteUser('${u.email}')">Delete</button>`:''}</div>`).join('');}if(tab==='pendingBal'){let users=JSON.parse(localStorage.getItem('mt_users')||'[]').filter(u=> (u.pd||0)>0 );c.innerHTML='<h4>Pending → Available</h4>'+(users.length?users.map(u=>`<div style="border:1px solid #eee;padding:10px;margin:8px 0;border-radius:8px"><b>${u.username}</b><br>Pending: ₦${u.pd}<br><button class="btn-approve" onclick="approvePendingBal('${u.email}')">Approve</button></div>`).join(''):'No pending');}if(tab==='allTasksAdmin'){let tasks=JSON.parse(localStorage.getItem('mt_tasks')||'[]');c.innerHTML='<h4>All Tasks</h4>'+tasks.map(t=>`<div style="padding:8px;border-bottom:1px solid #eee">${t.name} - ${t.remaining}/${t.qty} <button onclick="deleteTask('${t.id}')">Delete</button></div>`).join('');}if(tab==='proofs'){let proofs=JSON.parse(localStorage.getItem('mt_proofs')||'[]').filter(p=>p.status==='pending');c.innerHTML='<h4>Pending Proofs - Direct to Earning</h4>'+(proofs.length?proofs.map(p=>`<div style="border:1px solid #eee;padding:10px;margin:8px 0;border-radius:8px"><b>${p.taskName}</b><br>${p.user}<br><img src="${p.proof}" style="width:100%;max-width:220px"><br><button class="btn-approve" onclick="approveProof('${p.id}')">Approve → Earning</button><button class="btn-reject" onclick="rejectProof('${p.id}')">Reject</button></div>`).join(''):'No pending');}if(tab==='depositsAdmin'){let deps=JSON.parse(localStorage.getItem('mt_deposits')||'[]').filter(d=>d.status==='pending');c.innerHTML='<h4>Deposits</h4>'+(deps.length?deps.map(d=>`<div style="border:1px solid #eee;padding:10px;margin:8px 0;border-radius:8px">${d.user} - ₦${d.amount}<br><button class="btn-approve" onclick="approveDeposit('${d.id}')">Approve</button><button class="btn-reject" onclick="rejectDeposit('${d.id}')">Reject</button></div>`).join(''):'No pending');}if(tab==='withdrawalsAdmin'){let wds=JSON.parse(localStorage.getItem('mt_withdrawals')||'[]').filter(w=>w.status==='pending');c.innerHTML='<h4>Withdrawals</h4>'+(wds.length?wds.map(w=>`<div style="border:1px solid #eee;padding:10px;margin:8px 0;border-radius:8px"><b>${w.user}</b><br>₦${w.amount} - Net ₦${w.net}<br>${w.bank} - ${w.accNum} - ${w.accName}<br><button class="btn-approve" onclick="approveWithdrawal('${w.id}')">Pay ₦${w.net}</button><button class="btn-reject" onclick="rejectWithdrawal('${w.id}')">Reject</button></div>`).join(''):'No pending');}if(tab==='referralsAdmin'){let users=JSON.parse(localStorage.getItem('mt_users')||'[]');let withRefs=users.filter(u=>u.referredBy);c.innerHTML='<h4>Referrals</h4>'+(withRefs.length?withRefs.map(u=>`<div style="border:1px solid #eee;padding:8px;margin:5px 0;border-radius:8px">${u.email} by ${u.referredBy}</div>`).join(''):'No referrals');}}
-function approvePendingBal(email){let users=JSON.parse(localStorage.getItem('mt_users')||'[]');let u=users.find(x=>x.email===email);if(!u)return;u.av=(u.av||0)+(u.pd||0);u.pd=0;localStorage.setItem('mt_users',JSON.stringify(users));alert('Approved');showAdmin('pendingBal');}
-function tempDeleteUser(email){if(email===ADMIN)return;let users=JSON.parse(localStorage.getItem('mt_users')||'[]');let u=users.find(x=>x.email===email);if(u){u.status='suspended';localStorage.setItem('mt_users',JSON.stringify(users));showAdmin('users');}}
-function permanentDeleteUser(email){if(email===ADMIN)return;let users=JSON.parse(localStorage.getItem('mt_users')||'[]');users=users.filter(x=>x.email!==email);localStorage.setItem('mt_users',JSON.stringify(users));showAdmin('users');}
-function approveProof(id){
-let proofs=JSON.parse(localStorage.getItem('mt_proofs')||'[]');
-let p=proofs.find(x=>x.id===id);
-if(!p)return;
-let tasks=JSON.parse(localStorage.getItem('mt_tasks')||'[]');
-let t=tasks.find(x=>x.id===p.taskId);
-if(t){t.remaining=Math.max(0,t.remaining-1);localStorage.setItem('mt_tasks',JSON.stringify(tasks));}
-let users=JSON.parse(localStorage.getItem('mt_users')||'[]');
-let u=users.find(x=>x.email===p.user);
-if(u){
-// DIRECT TO EARNING BALANCE - NO PENDING
-u.av=(u.av||0)+(t?t.priceEarn:20);
-localStorage.setItem('mt_users',JSON.stringify(users));
-}
-p.status='approved';
-localStorage.setItem('mt_proofs',JSON.stringify(proofs));
-alert('Approved! ₦'+(t?t.priceEarn:20)+' → Earning Balance');
-showAdmin('proofs');
-}
-function rejectProof(id){let proofs=JSON.parse(localStorage.getItem('mt_proofs')||'[]');let p=proofs.find(x=>x.id===id);if(!p)return;p.status='rejected';localStorage.setItem('mt_proofs',JSON.stringify(proofs));showAdmin('proofs');}
-function approveDeposit(id){let deps=JSON.parse(localStorage.getItem('mt_deposits')||'[]');let d=deps.find(x=>x.id===id);if(!d)return;let users=JSON.parse(localStorage.getItem('mt_users')||'[]');let u=users.find(x=>x.email===d.user);if(u){u.dep=(u.dep||0)+d.amount;localStorage.setItem('mt_users',JSON.stringify(users));}d.status='approved';localStorage.setItem('mt_deposits',JSON.stringify(deps));showAdmin('depositsAdmin');}
-function rejectDeposit(id){let deps=JSON.parse(localStorage.getItem('mt_deposits')||'[]');let d=deps.find(x=>x.id===id);if(!d)return;d.status='rejected';localStorage.setItem('mt_deposits',JSON.stringify(deps));showAdmin('depositsAdmin');}
-function approveWithdrawal(id){let wds=JSON.parse(localStorage.getItem('mt_withdrawals')||'[]');let w=wds.find(x=>x.id===id);if(!w)return;let users=JSON.parse(localStorage.getItem('mt_users')||'[]');let u=users.find(x=>x.email===w.user);if(u){if(!u.hasWithdrawn && u.referredBy){let ref=users.find(x=>x.email===u.referredBy);if(ref){let bonus=Math.floor(w.amount*0.10);ref.av=(ref.av||0)+bonus;ref.refEarn=(ref.refEarn||0)+bonus;}}u.hasWithdrawn=true;localStorage.setItem('mt_users',JSON.stringify(users));}w.status='approved';localStorage.setItem('mt_withdrawals',JSON.stringify(wds));alert('Approved Net ₦'+w.net);showAdmin('withdrawalsAdmin');}
-function rejectWithdrawal(id){let wds=JSON.parse(localStorage.getItem('mt_withdrawals')||'[]');let w=wds.find(x=>x.id===id);if(!w)return;let users=JSON.parse(localStorage.getItem('mt_users')||'[]');let u=users.find(x=>x.email===w.user);if(u){u.av=(u.av||0)+w.amount;localStorage.setItem('mt_users',JSON.stringify(users));}w.status='rejected';localStorage.setItem('mt_withdrawals',JSON.stringify(wds));showAdmin('withdrawalsAdmin');}
-function deleteTask(id){let tasks=JSON.parse(localStorage.getItem('mt_tasks')||'[]');tasks=tasks.filter(t=>t.id!==id);localStorage.setItem('mt_tasks',JSON.stringify(tasks));if(typeof loadMyCreatedTasks==='function') loadMyCreatedTasks();showAdmin('allTasksAdmin');}
-window.onload=init;  
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>social-task1</title>
+<link rel="icon" href="logo.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0a7e07">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
+body{background:#fff;color:#222}
+.top{background:#fff;padding:12px 15px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:20;border-bottom:1px solid #eee}
+.top-left{display:flex;align-items:center;gap:10px}
+.app-logo-img{width:36px;height:36px;border-radius:50%;background:#000;object-fit:cover}
+.menu-btn{width:36px;height:36px;border-radius:50%;border:1px solid #eee;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer}
+.menu-btn span{width:16px;height:2px;background:#222;border-radius:5px;display:block}
+.join-bar{background:#25D366;color:#fff;text-align:center;padding:10px;font-size:14px;position:sticky;top:60px;z-index:15}
+.join-bar a{background:#fff;color:#25D366;padding:5px 12px;border-radius:20px;text-decoration:none;font-weight:bold;margin-left:8px}
+#sideMenu{position:fixed;top:0;left:-270px;width:260px;height:100%;background:#fff;box-shadow:2px 0 15px rgba(0,0,0,.2);z-index:30;transition:.3s;padding:20px}
+#sideMenu.active{left:0}
+#sideMenu a{display:block;padding:13px 0;border-bottom:1px solid #f0f0f0;text-decoration:none;color:#222;font-weight:600}
+.card{background:#fff;margin:12px;border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,.06);padding:15px}
+.bal-home{background:#e8f5e9;border-radius:18px;padding:18px;margin:12px;border:1px solid #c8e6c9}
+.bal-home b{font-size:32px}
+.withdraw-green{background:#0a7e07;color:#fff;border:none;padding:14px;border-radius:30px;width:100%;font-weight:bold;font-size:16px;margin-top:14px;cursor:pointer}
+.btn{background:#0a7e07;color:#fff;border:none;padding:13px;border-radius:10px;width:100%;font-weight:bold;font-size:15px;cursor:pointer;margin-top:8px}
+.btn2{background:#222}
+.btn-outline{background:#fff;color:#0a7e07;border:2px solid #0a7e07}
+.btn-approve{background:#0a7e07;color:#fff;padding:10px 14px;border:none;border-radius:8px;font-weight:bold;margin:4px;cursor:pointer}
+.btn-reject{background:#e53935;color:#fff;padding:10px 14px;border:none;border-radius:8px;font-weight:bold;margin:4px;cursor:pointer}
+.input{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;margin:6px 0}
+.task-fansup{background:#fff;border:1px solid #eee;border-radius:16px;padding:14px;margin:10px 0}
+.task-top{display:flex;gap:12px}
+.task-logo{width:48px;height:48px;border-radius:14px;border:1px solid #eee;display:flex;align-items:center;justify-content:center;background:#fff;flex-shrink:0;overflow:hidden}
+.task-logo img{width:70%;height:70%;object-fit:contain}
+.badge-gray{background:#f3f3f3;padding:5px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.task-bottom{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
+.earn-text b{color:#0a7e07}
+.start-btn{border:1px solid #0a7e07;background:#fff;color:#0a7e07;padding:8px 16px;border-radius:20px;font-weight:bold;cursor:pointer}
+.popup{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:50;padding:15px}
+.hidden{display:none}
+.auth-tab{display:flex;gap:10px;margin-bottom:12px}
+.auth-tab button{flex:1;padding:12px;border-radius:10px;font-weight:bold;cursor:pointer}
+.active{background:#0a7e07;color:#fff;border:2px solid #0a7e07}
+.inactive{background:#fff;color:#0a7e07;border:2px solid #0a7e07}
+.ref-box{background:#e8f5e9;border:1px dashed #0a7e07;padding:12px;border-radius:10px;word-break:break-all;margin:10px 0}
+.home-header{display:flex;justify-content:space-between;align-items:center;padding:16px 12px 0 12px}
+.home-header h1{font-size:28px;font-weight:900}
+.plus-btn{width:38px;height:38px;background:#0a7e07;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;border:none;cursor:pointer}
+.ad-card{background:#e8f5e9;border-radius:18px;padding:18px;margin-bottom:12px}
+</style>
+</head>
+<body>
+<div class="top"><div class="top-left"><img src="logo.png" class="app-logo-img"><b><span style="color:#0a7e07">social</span>-task1</b></div><div style="display:flex;gap:8px"><div style="width:36px;height:36px;border-radius:50%;border:1px solid #eee;display:flex;align-items:center;justify-content:center">🔔</div><div class="menu-btn" onclick="toggleMenu()"><span></span><span></span><span></span></div></div></div>
+<div class="join-bar">📢 Official Group <a href="https://chat.whatsapp.com/LYlXUpdqiL24XQ42rtZCl1?s=cl&p=a&mlu=4&ilr=4" target="_blank">Join WhatsApp</a></div>
+<div id="sideMenu">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:15px"><img src="logo.png" style="width:42px;height:42px;border-radius:50%"><b>social-task1</b></div>
+<a href="#" onclick="showPage('home');toggleMenu()">🏠 Dashboard</a>
+<a href="#" onclick="showPage('tasks');toggleMenu()">📋 All Tasks</a>
+<a href="#" onclick="showPage('post');toggleMenu()">➕ My Tasks / Post</a>
+<a href="#" onclick="showPage('referral');toggleMenu()">👥 Refer & Earn 10%</a>
+<a href="#" onclick="showPage('withdraw');toggleMenu()">💸 Withdrawal</a>
+<a href="#" onclick="showPage('deposit');toggleMenu()">💰 Deposit - <span id="menuDep">₦0</span></a>
+<a href="https://chat.whatsapp.com/LYlXUpdqiL24XQ42rtZCl1?s=cl&p=a&mlu=4&ilr=4" target="_blank" style="color:#25D366">💬 Join Group</a>
+<a href="#" id="adminLink" class="hidden" style="display:none" onclick="showPage('admin');toggleMenu()">👑 Admin Panel</a>
+<a href="#" onclick="logout()">🚪 Logout</a>
+</div>
+<div id="auth" class="card" style="margin-top:20px;text-align:center">
+<img src="logo.png" style="width:90px;height:90px;border-radius:50%;margin:auto;display:block;border:3px solid #0a7e07">
+<h2>social-task1</h2><small>Complete • Earn • Withdraw</small>
+<div class="auth-tab" style="margin-top:15px">
+<button id="tabSignIn" class="active" onclick="setAuthMode('signin')">Sign In</button>
+<button id="tabSignUp" class="inactive" onclick="setAuthMode('signup')">Sign Up</button>
+</div>
+<div style="text-align:left">
+<input id="aUser" class="input hidden" placeholder="Username">
+<input id="aEmail" class="input" placeholder="Email">
+<input id="aPass" class="input" type="password" placeholder="Password">
+<input id="aRef" class="input hidden" placeholder="Referral Code (Optional)">
+<input id="aCode" class="input hidden" placeholder="Enter code sent to YOUR email">
+<button class="btn" id="authBtn" onclick="handleAuth()">Sign In</button>
+<button class="btn btn-outline" id="switchBtn" onclick="toggleAuthMode()" style="margin-top:8px">Don't have account? Sign Up</button>
+<p id="emailStatus" style="font-size:12px;color:green;margin-top:8px"></p>
+</div>
+</div>
+<div id="home" class="hidden">
+<div class="home-header"><h1>Home</h1><button class="plus-btn" onclick="showPage('post')">+</button></div>
+<div class="bal-home">
+<small>Earning balance ⓘ</small><br><b id="avBal">₦0</b><br><small style="margin-top:10px;display:block">Pending balance: <b id="pdBal">₦0</b> (need admin approve)</small>
+<button class="withdraw-green" onclick="showPage('withdraw')">↗ Withdraw</button>
+</div>
+<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px">
+<h3 style="font-weight:800">Suggested tasks</h3><small style="color:#0a7e07;font-weight:bold;cursor:pointer" onclick="showPage('tasks')">View more ›</small>
+</div>
+<div id="homeTasks" style="padding:0 12px"></div>
+  </div>
+<div id="tasks" class="hidden">
+<div class="card"><h3>All Available Tasks</h3><div id="allTasks"></div>
+<div style="display:flex;gap:10px;margin-top:12px"><button class="btn btn2" onclick="changePage(-1)">Prev</button><button class="btn" onclick="changePage(1)">Next</button></div>
+</div></div>
+
+<div id="post" class="hidden" style="background:#fff;min-height:100vh">
+<div style="padding:16px">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><h2 style="font-size:26px;font-weight:900">My Tasks</h2><button class="plus-btn" onclick="document.getElementById('createForm').scrollIntoView({behavior:'smooth'})">+</button></div>
+<div class="ad-card"><small>Advertising balance ⓘ</small><div style="font-size:34px;font-weight:900;margin:8px 0" id="postDep">₦0</div><button onclick="showPage('deposit')" style="width:100%;background:#0a7e07;color:#fff;border:none;padding:14px;border-radius:12px;font-weight:bold">⬇ Deposit</button></div>
+<div style="display:flex;gap:10px;margin-bottom:10px"><div style="flex:1;background:#fff;border:1px solid #eee;border-radius:16px;padding:14px"><small>Active Tasks</small><br><b id="activeCount" style="font-size:22px">0</b></div><div style="flex:1;background:#fff;border:1px solid #eee;border-radius:16px;padding:14px"><small>Total Spent</small><br><b id="totalSpent" style="font-size:22px">₦0</b></div></div>
+<div style="display:flex;justify-content:space-between;align-items:center;margin:16px 0"><h3 style="font-weight:800">All tasks</h3><button onclick="document.getElementById('createForm').scrollIntoView({behavior:'smooth'})" style="background:#0a7e07;color:#fff;border:none;padding:8px 14px;border-radius:20px;font-weight:bold;font-size:12px">+ Create Task</button></div>
+<div id="myCreatedList"></div>
+<div id="emptyState" style="text-align:center;padding:30px 10px"><div style="width:100px;height:100px;background:#e8f5e9;border:3px solid #0a7e07;border-radius:24px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:40px">☑️</div><h3>No Tasks Yet</h3><p style="color:#777;font-size:13px;margin-top:6px">You haven't created any tasks yet.<br>Tap Create Task to launch your first campaign.</p></div>
+<div id="createForm" class="card" style="border:2px solid #0a7e07;margin-top:20px"><h3>Create New Task</h3>
+<label>Select Platform</label><div id="appGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:10px 0"></div>
+<p id="selectedAppText" style="color:#0a7e07;font-weight:bold"></p>
+<label>Task Type</label><select id="pType" class="input"></select>
+<label>Task Link</label><input id="pLink" class="input" placeholder="https://...">
+<label>Units</label><input id="pQty" type="number" class="input" value="10">
+<p id="priceInfo" style="background:#e8f5e9;padding:10px;border-radius:8px;font-size:13px;margin:8px 0"></p>
+<button class="btn" onclick="createTask()">Post Now</button></div>
+</div></div>
+
+<div id="referral" class="hidden">
+<div class="card"><h3>👥 Refer & Earn 10%</h3>
+<div style="background:#e8f5e9;padding:14px;border-radius:10px;margin:10px 0;border:2px solid #0a7e07"><b>💰 You will earn 10% from first withdrawal</b><br><small>You will not get paid till when the person you referred make their first withdrawal</small></div>
+<p><b>Your Referral Code:</b></p><div class="ref-box" id="myRefCode"></div>
+<p><b>Your Referral Link:</b></p><div class="ref-box" id="myRefLink"></div>
+<button class="btn" onclick="copyRef()">📋 Copy Link</button>
+<div style="display:flex;gap:10px;margin-top:12px"><div style="flex:1;background:#f5f5f5;padding:12px;border-radius:10px;text-align:center"><small>Total Referrals</small><br><b id="refCount">0</b></div><div style="flex:1;background:#e8f5e9;padding:12px;border-radius:10px;text-align:center"><small>Earned</small><br><b id="refEarn">₦0</b></div></div>
+</div><div class="card"><h4>My Referrals</h4><div id="myReferralsList"></div></div></div>
+
+<div id="withdraw" class="hidden">
+<div class="card"><h3>💸 Withdrawal</h3>
+<div style="background:#e8f5e9;padding:12px;border-radius:10px;margin-bottom:12px">Available: <b id="wAvBal">₦0</b><br>Pending: <b id="wPdBal">₦0</b><br><small>Min ₦300 | ₦20 charge every withdrawal | You get Amount - ₦20</small></div>
+<label>Account Name</label><input id="wAccName" class="input" placeholder="Your account name">
+<label>Account Number</label><input id="wAccNum" class="input" placeholder="Your account number">
+<label>Bank Name</label><input id="wBank" class="input" placeholder="Moniepoint, Opay, First Bank...">
+<label>Amount</label><input id="wAmt" type="number" class="input" placeholder="Min 300">
+<p id="wInfo" style="background:#fff3cd;padding:8px;border-radius:8px;font-size:13px"></p>
+<button class="btn" onclick="requestWithdraw()">Request Withdrawal (Charge ₦20)</button></div>
+<div class="card"><h4>My Withdrawals</h4><div id="myWithdrawals"></div></div></div>
+
+<div id="deposit" class="hidden">
+<div class="card"><h3>Deposit Funds</h3><p>Bank: Moniepoint<br>Acc: <b>5895097608</b><br>Name: <b>Ugochi Patricia Etumugo</b></p><p style="background:#e8f5e9;padding:8px;border-radius:8px">Current Deposit: <b id="depBalText">₦0</b></p><input id="dName" class="input" placeholder="Sender account name"><input id="dAmt" type="number" class="input" placeholder="Amount sent"><button class="btn" onclick="submitDeposit()">I Have Paid</button></div><div class="card"><h4>My Deposits</h4><div id="myDeposits"></div></div></div>
+
+<div id="admin" class="hidden"><div class="card" style="border:2px solid #0a7e07"><h3>👑 Admin Panel</h3><br>
+<button class="btn" onclick="showAdmin('users')">Users</button><button class="btn btn2" onclick="showAdmin('pendingBal')">Pending → Available</button><button class="btn btn2" onclick="showAdmin('allTasksAdmin')">All Tasks</button><button class="btn btn2" onclick="showAdmin('proofs')">Proofs</button><button class="btn btn2" onclick="showAdmin('depositsAdmin')">Deposits</button><button class="btn btn2" onclick="showAdmin('withdrawalsAdmin')">Withdrawals</button><button class="btn btn2" onclick="showAdmin('referralsAdmin')">Referrals</button></div><div class="card" id="adminContent"></div></div>
+
+<div id="taskPopup" class="popup"><div class="card" style="width:100%;max-width:400px"><h3 id="popTitle"></h3><a id="popLink" target="_blank" class="btn" style="display:block;text-align:center;text-decoration:none">👁️ Open Task</a><hr style="margin:12px 0"><label>Your Handle</label><input id="popHandle" class="input" placeholder="@handle"><label>Proof Screenshot</label><input id="popFile" type="file" accept="image/*" class="input"><div id="popCustomList" style="background:#f5f5f5;padding:8px;border-radius:8px;margin:8px 0;font-size:13px"></div><button class="btn" onclick="submitProof()">Submit</button><button class="btn btn2" onclick="closePopup('taskPopup')">Close</button></div></div>
+<div id="successPopup" class="popup"><div class="card" style="width:100%;max-width:380px;text-align:center;border:2px solid #0a7e07"><div style="width:70px;height:70px;background:#e8f5e9;border-radius:50%;margin:auto;display:flex;align-items:center;justify-content:center;font-size:40px">✅</div><h2 style="color:#0a7e07;margin-top:12px">Task Submitted!</h2><p style="margin:12px 0;background:#e8f5e9;padding:14px;border-radius:8px">Reviewed and approved within 24-48 hours</p><button class="btn" onclick="closePopup('successPopup')">OK</button></div></div>
+<div id="lowBalPopup" class="popup"><div class="card" style="width:100%;max-width:380px;text-align:center;border:2px solid #e53935"><h2 style="color:#e53935">⚠️ Insufficient Balance</h2><p id="lowBalText" style="margin:12px 0;background:#fff3cd;padding:12px;border-radius:8px;line-height:1.6"></p><button class="btn" onclick="goToDepositFromLowBal()">💰 Fund Wallet Now</button><button class="btn btn2" onclick="closePopup('lowBalPopup')" style="margin-top:8px">Close</button></div></div>
+<script src="app.js?v=5"></script>
+</body>
+  </html>  
