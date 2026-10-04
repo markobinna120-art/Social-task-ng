@@ -1,6 +1,7 @@
 emailjs.init("eOnK3qvUFiw89dhdV");
 const SERVICE_ID="service_147bn6m";const TEMPLATE_ID="template_kndbrqg";
 const ADMIN="markobinna120@gmail.com";
+const ADMIN PASSWORD="Admin1234"
 const APPS=[{id:"Facebook",logo:"https://cdn.simpleicons.org/facebook/1877F2"},{id:"Instagram",logo:"https://cdn.simpleicons.org/instagram/E4405F"},{id:"TikTok",logo:"https://cdn.simpleicons.org/tiktok/000000"},{id:"YouTube",logo:"https://cdn.simpleicons.org/youtube/FF0000"},{id:"Twitter/X",logo:"https://cdn.simpleicons.org/x/000000"},{id:"WhatsApp",logo:"https://cdn.simpleicons.org/whatsapp/25D366"},{id:"Telegram",logo:"https://cdn.simpleicons.org/telegram/26A5E4"},{id:"Website",logo:"https://cdn.simpleicons.org/googlechrome/4285F4"}];
 const PRICES={"Like a post":{adv:30,earn:20},"Like a video":{adv:30,earn:20},"Watch a video":{adv:35,earn:25},"View a video":{adv:35,earn:25},"Comment on a video":{adv:40,earn:25},"Custom comment":{adv:50,earn:30},"Share a post":{adv:40,earn:25},"Join a group":{adv:50,earn:30},"Follow a channel":{adv:50,earn:30},"Follow a page":{adv:50,earn:30},"Subscribe to a channel":{adv:50,earn:30},"Start a telegram bot":{adv:50,earn:30},"Website Signup":{adv:80,earn:50},"Website Vote":{adv:60,earn:40},"Website Visit":{adv:30,earn:20}};
 let curUser=null,curTask=null,currentPage=1,perPage=10,selectedApp="Facebook";let authMode='signin';
